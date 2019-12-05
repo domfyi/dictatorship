@@ -34,8 +34,11 @@
       (entries, observer) => {
         entries.forEach(entry => {
           const isAbove = entry.boundingClientRect.y < entry.rootBounds.y;
-          if (entry.isIntersecting) {
-            // console.log(wasAbove, entry.target.getAttribute("i"));
+          if (entry.isIntersecting && entry.intersectionRatio < 0.5) {
+            // if (entry.target.getAttribute("i") === "victorians") {
+            //   console.log("victorians", { wasAbove });
+            //   return (currentPM = "victorians");
+            // }
             const previous = document.querySelectorAll(
               ".slideOutUp, .slideInDown"
             );
@@ -43,19 +46,20 @@
               element.classList.remove("slideOutUp");
               element.classList.remove("slideInDown");
             });
-
             previous &&
               previous.classList &&
               previous.classList.add("slideInDown");
             entry.target.parentElement.classList.add("slideOutUp");
+            // console.log(
+            //   entry.target,
+            //   entry.isIntersecting,
+            //   entry.intersectionRatio
+            // );
             if (wasAbove) {
               currentPM = Math.max(0, +entry.target.getAttribute("i"));
             } else {
-              currentPM = Math.max(0, +entry.target.getAttribute("i") + 1);
+              currentPM = Math.max(0, +entry.target.getAttribute("i"));
             }
-            // if (!wasAbove) {
-            //   currentPM = Math.max(0, +entry.target.getAttribute("i"));
-            // }
           }
           wasAbove = isAbove;
         });
@@ -76,7 +80,7 @@
     //   },
     //   { rootMargin: "33% 0px 66% 0px", threshold: 0.33 }
     // );
-    document.querySelectorAll(".pm .trigger").forEach(pm => {
+    document.querySelectorAll(".trigger").forEach(pm => {
       //   observerUpward.observe(pm);
       observerDownwards.observe(pm);
     });
@@ -89,12 +93,15 @@
     const pmHeight = height / 3;
     const startPoint = 0;
     const midPoint = height - height / 2 - pmHeight / 2;
-    const endPoint = height - pmHeight;
+    const endPoint = height - pmHeight + 4;
+    const victorianPoint =
+      document.documentElement.scrollHeight - height * 2 - height / 3;
     const firstHalfDistance = midPoint - startPoint;
     const firstHalfTime = pause - up1;
     const secondHalfDistance = endPoint - midPoint;
     const secondHalfTime = stop - up2;
     const timeDistanceToPixels = (t, d) => d / t;
+
     const firstHalfPxPerPx = timeDistanceToPixels(
       firstHalfTime,
       firstHalfDistance
@@ -103,6 +110,7 @@
       secondHalfTime,
       secondHalfDistance
     );
+    console.log({ y, victorianPoint });
     const pmBottom =
       y > up1 && y <= pause
         ? (y - up1) * firstHalfPxPerPx
@@ -110,8 +118,10 @@
         ? midPoint
         : y > up2 && y <= stop
         ? midPoint + (y - up2) * secondHalfPxPerPx
-        : y > stop
+        : y > stop && y <= victorianPoint
         ? endPoint
+        : y > victorianPoint
+        ? endPoint + (y - victorianPoint)
         : startPoint;
     const rounded = Math.round(pmBottom);
     return rounded;
@@ -171,7 +181,8 @@
   }
 
   h1,
-  .majority-text {
+  .majority-text,
+  .victorian-title {
     /* font-family: "Amatic SC", cursive; */
     font-family: "Big Shoulders Display";
     /* font-family: "Big Shoulders Display", cursive; */
@@ -184,7 +195,7 @@
     background-size: cover;
     background-position: center center;
     text-transform: uppercase;
-    font-size: 3rem;
+    font-size: 4rem;
     /* font-weight: 300; */
     padding: 4rem 2rem;
     border-top: 3px solid #222;
@@ -202,8 +213,8 @@
     font-size: 1.5rem;
   }
   h1 div:first-child {
-    font-size: 4rem;
-    line-height: 4rem;
+    font-size: 5rem;
+    line-height: 5rem;
     border-bottom: 2px solid #eee;
     width: 380px;
     margin: 0 auto;
@@ -328,6 +339,7 @@
   .mini-pm-container {
     margin-top: 100px;
     border-bottom: 1px solid #333;
+    margin-bottom: 100px;
   }
   .mini-pm {
     height: 100px;
@@ -357,12 +369,29 @@
   }
   .victorians {
     height: 100vh;
-    background: url(https://ae01.alicdn.com/kf/HTB1oRDki2BNTKJjSszcq6zO2VXad/Vintage-patent-HD-art-prints-4-in-1-on-old-bicycle-development-patent-old-paper-style.jpg_q50.jpg);
-    background-size: cover;
+    background: #eee;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .victorian-inner {
+    /* padding-top: 50%;
+    transform: translateY(-50%); */
+  }
+  .victorian-title {
+    font-size: 3rem;
+    text-transform: uppercase;
+    margin: 1rem;
+  }
+  .victorians img {
+    height: 50vh;
   }
   .created-by {
     height: 100vh;
     background: #444;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 </style>
 
@@ -404,18 +433,24 @@
       style={`bottom: ${pmsBottom}px; background: ${y > height ? '#fff' : 'none'}`}>
       <div class="ovelay-inner">
         <div class="pms">
-          <img
-            alt="pm2"
-            class={`pm2 ${y > animations.pm2.down ? 'bounceOutDown' : 'bounceInUp'} animated`}
-            src={`/pms/${pm2.image}`} />
-          <img
-            alt="pm1"
-            class={`pm1 ${y > animations.pms.pause ? 'left' : ''}`}
-            src={`/pms/${pms[currentPM].image}`} />
-          <img
-            alt="pm3"
-            class={`pm3 ${y > animations.pm3.down ? 'bounceOutDown' : 'bounceInUp'} animated`}
-            src={`/pms/${pm3.image}`} />
+          {#if pm2}
+            <img
+              alt="pm2"
+              class={`pm2 ${y > animations.pm2.down ? 'bounceOutDown' : 'bounceInUp'} animated`}
+              src={`/pms/${pm2.image}`} />
+          {/if}
+          {#if pms[currentPM]}
+            <img
+              alt="pm1"
+              class={`pm1 ${y > animations.pms.pause ? 'left' : ''}`}
+              src={`/pms/${pms[currentPM].image}`} />
+          {/if}
+          {#if pm3}
+            <img
+              alt="pm3"
+              class={`pm3 ${y > animations.pm3.down ? 'bounceOutDown' : 'bounceInUp'} animated`}
+              src={`/pms/${pm3.image}`} />
+          {/if}
         </div>
         <div
           class={`majority`}
@@ -442,7 +477,12 @@
           </div>
         </div>
       {/each}
-      <div class="victorians">victorians</div>
+      <div class="victorians">
+        <div class="victorian-inner">
+          <img src="pms/Victorians.png" />
+          <div class="victorian-title">victorians</div>
+        </div>
+      </div>
       <div class="created-by">created by</div>
     </section>
   </div>
