@@ -184,6 +184,13 @@
     opacity: 0;
   }
 
+  @media only screen and (max-width: 600px) {
+    .pms {
+      /* transform: scale(0.7);
+      transform-origin: bottom; */
+    }
+  }
+
   h1,
   .majority-text,
   .victorian-title {
@@ -208,6 +215,8 @@
     margin-right: -20px;
     color: #fff;
     letter-spacing: 1px;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
   }
   h1,
   header p {
@@ -238,6 +247,8 @@
   }
   .cover-title {
     width: 100%;
+    display: flex;
+    flex-direction: column;
   }
   .overlay {
     text-align: center;
@@ -291,6 +302,14 @@
   .pm1.left {
     margin-left: -33%;
   }
+
+  @media only screen and (max-width: 600px) {
+    .pm1.left {
+      transform: scale(0.8);
+      transform-origin: bottom;
+    }
+  }
+
   .pm2 {
     margin-left: 25vh;
     z-index: 2;
@@ -472,11 +491,8 @@
     </div>
     <section class="history">
       <div class="pm " i={0}>
-        <div class="animated mini-pm-container">
-          <img
-            class="trigger mini-pm first-pm"
-            i={0}
-            src={`/pms/${pms[0].image}`} />
+        <div class="animated mini-pm-container first-pm">
+          <img class="trigger mini-pm " i={0} src={`/pms/${pms[0].image}`} />
         </div>
       </div>
       {#each pms.slice(1) as pm, i}
