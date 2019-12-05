@@ -1,10 +1,14 @@
 <script>
   import { onMount } from "svelte";
   import { pms, parties } from "./data.js";
-  const [pm1, pm2, pm3] = pms;
   let y;
   let height;
   let currentPM = 0;
+  $: pm1 = pms[currentPM || 0];
+  $: pm2 = pms[currentPM + 1 || 0];
+  $: pm3 = pms[currentPM + 2 || 0];
+
+  //   const [pm1, pm2, pm3] = pms;
   $: animations = {
     cover: {
       startFade: (height / 4) * 0
@@ -25,19 +29,31 @@
     }
   };
   onMount(() => {
-    var wasAbove = false;
+    // var wasAbove = false;
     let observerDownwards = new IntersectionObserver(
       (entries, observer) => {
         entries.forEach(entry => {
           const isAbove = entry.boundingClientRect.y < entry.rootBounds.y;
           if (entry.isIntersecting) {
-            console.log(wasAbove, entry.target.getAttribute("i"));
+            // console.log(wasAbove, entry.target.getAttribute("i"));
+            const previous = document.querySelectorAll(
+              ".slideOutUp, .slideInDown"
+            );
+            document.querySelectorAll(".mini-pm-container").forEach(element => {
+              element.classList.remove("slideOutUp");
+              element.classList.remove("slideInDown");
+            });
+
+            previous &&
+              previous.classList &&
+              previous.classList.add("slideInDown");
+            entry.target.parentElement.classList.add("slideOutUp");
             currentPM = Math.max(0, +entry.target.getAttribute("i"));
-            if (!wasAbove) {
-              currentPM = Math.max(0, +entry.target.getAttribute("i"));
-            }
+            // if (!wasAbove) {
+            //   currentPM = Math.max(0, +entry.target.getAttribute("i"));
+            // }
           }
-          wasAbove = isAbove;
+          //   wasAbove = isAbove;
         });
       },
       { rootMargin: "0px 0px -66%", threshold: 0 }
@@ -251,7 +267,7 @@
   .pm1 {
     z-index: 3;
     height: 100%;
-    transition: 0.8s all;
+    transition: 0.8s all 0.3s;
   }
   .pm1.left {
     margin-left: -33%;
@@ -335,6 +351,15 @@
   .sic {
     opacity: 0.66;
   }
+  .victorians {
+    height: 100vh;
+    background: url(https://ae01.alicdn.com/kf/HTB1oRDki2BNTKJjSszcq6zO2VXad/Vintage-patent-HD-art-prints-4-in-1-on-old-bicycle-development-patent-old-paper-style.jpg_q50.jpg);
+    background-size: cover;
+  }
+  .created-by {
+    height: 100vh;
+    background: #444;
+  }
 </style>
 
 <svelte:window bind:scrollY={y} bind:innerHeight={height} />
@@ -403,20 +428,18 @@
       </div>
     </div>
     <section class="history">
-      <div class="pm" i={0}>
-        <div class="trigger" />
+      <div class="pm animated" i={0}>
+        <div class="trigger" i={0} />
       </div>
       {#each pms.slice(1) as pm, i}
-        <div class="pm" i={i + 1}>
-          <div class="mini-pm-container">
+        <div class="pm " i={i + 1}>
+          <div class="animated mini-pm-container">
             <img class="trigger mini-pm" i={i + 1} src={`/pms/${pm.image}`} />
-          </div>
-          <div class="mini-pm-name">{pm.nickname}</div>
-          <div class="mini-pm-date">
-            <span>{pm.date.slice(0, 4)}</span>
           </div>
         </div>
       {/each}
+      <div class="victorians">victorians</div>
+      <div class="created-by">created by</div>
     </section>
   </div>
 </main>

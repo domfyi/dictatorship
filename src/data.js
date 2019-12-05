@@ -260,7 +260,7 @@ export const pms = [
   {
     date: "1916-12-06",
     name: "David Lloyd George",
-    nickname: "Lloyd George",
+    nickname: "Lloyd G",
     party: "LIB",
     image: "Lloyd-George.png",
     majority: []
