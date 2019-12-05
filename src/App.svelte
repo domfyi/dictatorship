@@ -544,7 +544,7 @@
                 style={`background: ${parties[pms[i].party]}`} />
             </div>
           </div>
-          {#each pm.majority as majority, i}
+          {#each pm.majority.filter(Boolean) as majority, i}
             <div
               class="majority-container"
               style={`width: ${((majority.seats / 2 + majority.majority) / majority.seats) * 100}%`}>

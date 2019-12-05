@@ -5,7 +5,14 @@ export const parties = {
 };
 
 // inject acts into pms
-export const acts = [];
+export const acts = [
+  {
+    date: "1969-04-17",
+    act: "Representation of the People Act",
+    link: "https://en.wikipedia.org/wiki/Representation_of_the_People_Act_1969",
+    simple: "18 year olds can vote"
+  }
+];
 
 export const pms = [
   {
@@ -106,6 +113,11 @@ export const pms = [
     image: "Major.png",
     majority: [
       {
+        date: "1992-04-09",
+        majority: 21,
+        seats: 651
+      },
+      {
         date: "1990-11-28",
         majority: 21,
         seats: 651
@@ -157,6 +169,12 @@ export const pms = [
     party: "LAB",
     image: "Wilson.png",
     majority: [
+      ,
+      {
+        date: "1974-10-10",
+        majority: 3,
+        seats: 635
+      },
       {
         date: "1974-03-04",
         majority: -33,
@@ -217,7 +235,18 @@ export const pms = [
     nickname: "Macmillan",
     party: "CON",
     image: "Macmillan.png",
-    majority: []
+    majority: [
+      {
+        date: "1959-10-08",
+        majority: 100,
+        seats: 630
+      },
+      {
+        date: "1957-01-10",
+        majority: 60,
+        seats: 630
+      }
+    ]
   },
   {
     date: "1955-04-06",
@@ -225,7 +254,18 @@ export const pms = [
     nickname: "Eden",
     party: "CON",
     image: "Eden.png",
-    majority: []
+    majority: [
+      {
+        date: "1955-05-26",
+        majority: 60,
+        seats: 630
+      },
+      {
+        date: "1955-05-26",
+        majority: 60,
+        seats: 630
+      }
+    ]
   },
   {
     date: "1951-10-26",
