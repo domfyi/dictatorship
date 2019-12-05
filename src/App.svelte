@@ -29,7 +29,7 @@
     }
   };
   onMount(() => {
-    // var wasAbove = false;
+    var wasAbove = false;
     let observerDownwards = new IntersectionObserver(
       (entries, observer) => {
         entries.forEach(entry => {
@@ -48,12 +48,16 @@
               previous.classList &&
               previous.classList.add("slideInDown");
             entry.target.parentElement.classList.add("slideOutUp");
-            currentPM = Math.max(0, +entry.target.getAttribute("i"));
+            if (wasAbove) {
+              currentPM = Math.max(0, +entry.target.getAttribute("i"));
+            } else {
+              currentPM = Math.max(0, +entry.target.getAttribute("i") + 1);
+            }
             // if (!wasAbove) {
             //   currentPM = Math.max(0, +entry.target.getAttribute("i"));
             // }
           }
-          //   wasAbove = isAbove;
+          wasAbove = isAbove;
         });
       },
       { rootMargin: "0px 0px -66%", threshold: 0 }
@@ -154,7 +158,7 @@
   }
 
   p .citation {
-    font-size: 0.9rem;
+    font-size: 1rem;
     opacity: 0.66;
     text-align: right;
     display: block;
