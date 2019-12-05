@@ -1,6 +1,7 @@
 <script>
   import { onMount } from "svelte";
-  import { pms, parties } from "./data.js";
+  import { pms, parties, majorities } from "./data.js";
+  import moment from "moment";
   let y;
   let height;
   let currentPM = 0;
@@ -28,6 +29,13 @@
       stop: 1100
     }
   };
+  function monthDiff(dateFrom, dateTo) {
+    return (
+      dateTo.getMonth() -
+      dateFrom.getMonth() +
+      12 * (dateTo.getFullYear() - dateFrom.getFullYear())
+    );
+  }
   onMount(() => {
     var wasAbove = false;
     let reverse = false;
@@ -484,10 +492,18 @@
     background: blue;
   }
   .majority-container {
-    background: #ccc;
     margin: 0 auto;
     margin-bottom: 1rem;
     padding: 1rem;
+  }
+  .month {
+    padding: 3px;
+    background: #f6f6f6;
+    margin-bottom: 4px;
+    border-radius: 32px;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    color: #ccc;
   }
 </style>
 
@@ -577,11 +593,20 @@
                 style={`background: ${parties[pms[i].party]}`} />
             </div>
           </div>
-          {#each pm.majority.filter(Boolean) as majority, i}
+          {#each pm.majority.filter(Boolean) as majority, i_m}
             <div
               class="majority-container"
               style={`width: ${((majority.seats / 2 + majority.majority) / majority.seats) * 100}%`}>
-              majority
+              majority {majority.majority}
+              <div>
+                {#each Array(monthDiff(new Date(majorities[i + i_m + 1].date), new Date(majorities[i + i_m].date))) as _, i_m_m}
+                  <div class="month">
+                    {moment(majorities[i + i_m].date)
+                      .subtract(i_m_m + 1, 'months')
+                      .format('MMM YYYY')}
+                  </div>
+                {/each}
+              </div>
             </div>
           {/each}
         </div>
