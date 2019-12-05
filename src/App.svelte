@@ -31,8 +31,20 @@
   onMount(() => {
     var wasAbove = false;
     let reverse = false;
+
+    window.addEventListener("scroll", e => {
+      if (y < animations.pms.stop) {
+        currentPM = 0;
+        return;
+      }
+    });
+
     let observerDownwards = new IntersectionObserver(
       (entries, observer) => {
+        if (y < animations.pms.stop) {
+          currentPM = 0;
+          return;
+        }
         entries.forEach(entry => {
           const isAbove = entry.boundingClientRect.y < entry.rootBounds.y;
           //   if (!isAbove && !entry.isIntersecting) return;
@@ -227,6 +239,11 @@
     /* font-family: "Big Shoulders Display", cursive; */
     /* font-family: "Zilla Slab Highlight", cursive; */
     /* font-family: "Single Day"; */
+  }
+
+  .victorian-title {
+    font-weight: 100;
+    letter-spacing: 2px;
   }
 
   h1 {
@@ -500,24 +517,22 @@
       style={`bottom: ${pmsBottom}px; background: ${y > height ? '#fff' : 'none'}`}>
       <div class="ovelay-inner">
         <div class="pms">
-          {#if pm2}
-            <img
-              alt="pm2"
-              class={`pm2 ${y > animations.pm2.down ? 'bounceOutDown' : 'bounceInUp'} animated`}
-              src={`/pms/${pm2.image}`} />
-          {/if}
+          <img
+            alt="pm2"
+            class={`pm2 ${y > animations.pm2.down ? 'bounceOutDown' : 'bounceInUp'} animated`}
+            src={pm2 && `/pms/${pm2.image}`} />
           {#if pms[currentPM]}
             <img
               alt="pm1"
+              style={`opacity: ${pm3 ? 1 : 0}`}
               class={`pm1 ${y > animations.pms.pause ? 'left' : ''}`}
               src={`/pms/${pms[currentPM].image}`} />
           {/if}
-          {#if pm3}
-            <img
-              alt="pm3"
-              class={`pm3 ${y > animations.pm3.down ? 'bounceOutDown' : 'bounceInUp'} animated`}
-              src={`/pms/${pm3.image}`} />
-          {/if}
+          <img
+            alt="pm3"
+            style={`opacity: ${pm3 ? 1 : 0}`}
+            class={`pm3 ${y > animations.pm3.down ? 'bounceOutDown' : 'bounceInUp'} animated`}
+            src={pm3 && `/pms/${pm3.image}`} />
         </div>
         <div
           class={`majority`}
