@@ -1,8 +1,10 @@
 <script>
+  import { onMount } from "svelte";
   import { pms, parties } from "./data.js";
   const [pm1, pm2, pm3] = pms;
   let y;
   let height;
+  let currentPM = 0;
   $: animations = {
     cover: {
       startFade: (height / 4) * 0
@@ -22,6 +24,45 @@
       stop: 1100
     }
   };
+  onMount(() => {
+    var wasAbove = false;
+    let observerDownwards = new IntersectionObserver(
+      (entries, observer) => {
+        entries.forEach(entry => {
+          const isAbove = entry.boundingClientRect.y < entry.rootBounds.y;
+          if (entry.isIntersecting) {
+            console.log(wasAbove, entry.target.getAttribute("i"));
+            currentPM = Math.max(0, +entry.target.getAttribute("i"));
+            if (!wasAbove) {
+              currentPM = Math.max(0, +entry.target.getAttribute("i"));
+            }
+          }
+          wasAbove = isAbove;
+        });
+      },
+      { rootMargin: "0px 0px -66%", threshold: 0 }
+    );
+    // let observerUpward = new IntersectionObserver(
+    //   (entries, observer) => {
+    //     entries.forEach(entry => {
+    //       const isAbove = entry.boundingClientRect.y < entry.rootBounds.y;
+    //       if (entry.isIntersecting) {
+    //         if (wasAbove) {
+    //           currentPM = Math.max(0, +entry.target.getAttribute("i"));
+    //         }
+    //       }
+    //       wasAbove = isAbove;
+    //     });
+    //   },
+    //   { rootMargin: "33% 0px 66% 0px", threshold: 0.33 }
+    // );
+    document.querySelectorAll(".pm .trigger").forEach(pm => {
+      //   observerUpward.observe(pm);
+      observerDownwards.observe(pm);
+    });
+  });
+
+  //   let observer = new IntersectionObserver(callback, options);
 
   const setpmsBottom = () => {
     const { up1, pause, up2, stop } = animations.pms;
@@ -53,10 +94,15 @@
         ? endPoint
         : startPoint;
     const rounded = Math.round(pmBottom);
-    console.log(rounded);
     return rounded;
   };
   $: pmsBottom = setpmsBottom(y, height);
+
+  //   const setMajorityWidth = () => {
+
+  // 	  pms[currentPM]
+  //   };
+  //   $: majorityWidth = setMajorityWidth(y);
 </script>
 
 <style>
@@ -315,9 +361,9 @@
               <div>Dictatorship</div>
             </h1>
             <p>
-              Because a government elected with a big enough
-              <strong>majority</strong>
-              can essentially do what it wants.
+              Because a government elected with a big enough majority can
+              <strong>essentially do what it wants</strong>
+              .
               <span class="citation">— Lord Hailsham</span>
             </p>
           </div>
@@ -336,17 +382,19 @@
           <img
             alt="pm1"
             class={`pm1 ${y > animations.pms.pause ? 'left' : ''}`}
-            src={`/pms/${pm1.image}`} />
+            src={`/pms/${pms[currentPM].image}`} />
           <img
             alt="pm3"
             class={`pm3 ${y > animations.pm3.down ? 'bounceOutDown' : 'bounceInUp'} animated`}
             src={`/pms/${pm3.image}`} />
         </div>
-        <div class={`majority`} style={`background: ${parties[pm1.party]}`}>
+        <div
+          class={`majority`}
+          style={`background: ${parties[pms[currentPM].party]}`}>
           <span
             class="majority-text"
             style={`transform: translateY(${y < animations.pms.pause ? 100 : Math.max(0, 100 - (y - animations.pms.pause))}px)`}>
-            {pm1.nickname}
+            {pms[currentPM].nickname}
           </span>
         </div>
         <span class="scroll-down" style="opacity: {1 - Math.max(0, y / 80)}">
@@ -355,13 +403,18 @@
       </div>
     </div>
     <section class="history">
-      {#each pms.slice(1) as pm}
-        <div class="mini-pm-container">
-          <img class="mini-pm" src={`/pms/${pm.image}`} />
-        </div>
-        <div class="mini-pm-name">{pm.nickname}</div>
-        <div class="mini-pm-date">
-          <span>{pm.date.slice(0, 4)}</span>
+      <div class="pm" i={0}>
+        <div class="trigger" />
+      </div>
+      {#each pms.slice(1) as pm, i}
+        <div class="pm" i={i + 1}>
+          <div class="mini-pm-container">
+            <img class="trigger mini-pm" i={i + 1} src={`/pms/${pm.image}`} />
+          </div>
+          <div class="mini-pm-name">{pm.nickname}</div>
+          <div class="mini-pm-date">
+            <span>{pm.date.slice(0, 4)}</span>
+          </div>
         </div>
       {/each}
     </section>
