@@ -11,6 +11,12 @@ export const acts = [
     act: "Representation of the People Act",
     link: "https://en.wikipedia.org/wiki/Representation_of_the_People_Act_1969",
     simple: "18 year olds can vote"
+  },
+  {
+    date: "2015-12-17",
+    act: "European Union Referendum Act 2015",
+    link: "https://en.wikipedia.org/wiki/European_Union_Referendum_Act_2015",
+    simple: "Brexit referendum"
   }
 ];
 

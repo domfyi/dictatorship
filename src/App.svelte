@@ -288,16 +288,26 @@
   }
 
   .majority-header div:first-child {
-    font-size: 4rem;
-    letter-spacing: 3px;
-    font-weight: 900;
   }
 
   .majority-header {
-    font-size: 6.5rem;
+    bottom: 11vh;
+    font-size: 2.5rem;
+    letter-spacing: 2px;
     font-weight: 900;
     text-transform: uppercase;
-    line-height: 5rem;
+    line-height: 2rem;
+    color: rgb(0, 144, 235);
+    display: inline-block;
+    right: 0;
+    position: absolute;
+    text-align: right;
+    margin-right: 1rem;
+  }
+
+  .majority-header-date {
+    opacity: 0.5;
+    font-size: 2rem;
   }
 
   .cover {
@@ -429,7 +439,7 @@
     text-transform: uppercase;
   }
   .mini-pm-container {
-    margin-top: 100px;
+    margin-top: 20px;
     margin-bottom: 16px;
   }
   .mini-pm {
@@ -453,7 +463,6 @@
     margin-top: 2px;
     padding: 2px 4px 0 4px;
     display: inline-block;
-    margin-bottom: 200px;
   }
   .sic {
     opacity: 0.66;
@@ -493,17 +502,15 @@
   }
   .majority-container {
     margin: 0 auto;
-    margin-bottom: 1rem;
-    padding: 1rem;
   }
   .month {
-    padding: 3px;
+    padding: 2px;
     background: #f6f6f6;
     margin-bottom: 4px;
     border-radius: 32px;
     text-transform: uppercase;
     font-size: 0.7rem;
-    color: #ccc;
+    color: #aaa;
   }
 </style>
 
@@ -544,6 +551,16 @@
       class="overlay"
       style={`bottom: ${pmsBottom}px; background: ${y > height ? '#fff' : 'none'}`}>
       <div class="ovelay-inner">
+        <div
+          class="majority-header"
+          style={`color: ${parties[pms[currentPM].party]}`}>
+          <div>
+            <span class="majority-header-date">
+              {moment(majorities[0].date).format('MMM YYYY')}
+            </span>
+            <span>{pms[0].majority[0].majority}</span>
+          </div>
+        </div>
         <div class="pms">
           <img
             alt="pm2"
@@ -577,12 +594,6 @@
       </div>
     </div>
     <section class="history">
-      <div
-        class="majority-header"
-        style={`color: ${parties[pms[currentPM].party]}`}>
-        <div>majority</div>
-        <div>{pms[0].majority[0].majority}</div>
-      </div>
       {#each pms as pm, i}
         <div class="pm " {i}>
           <div class={`trigger mini-pm-container ${i === 0 && 'first-pm'}`} {i}>
@@ -597,7 +608,6 @@
             <div
               class="majority-container"
               style={`width: ${((majority.seats / 2 + majority.majority) / majority.seats) * 100}%`}>
-              majority {majority.majority}
               <div>
                 {#each Array(monthDiff(new Date(majorities[i + i_m + 1].date), new Date(majorities[i + i_m].date))) as _, i_m_m}
                   <div class="month">
