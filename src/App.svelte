@@ -191,7 +191,7 @@
 
   header {
     height: 100vh;
-    padding-bottom: 800px;
+    padding-bottom: 760px;
   }
 
   header p {
@@ -233,7 +233,8 @@
 
   h1,
   .majority-text,
-  .victorian-title {
+  .victorian-title,
+  .majority-header {
     /* font-family: "Amatic SC", cursive; */
     font-family: "Big Shoulders Display";
     /* font-family: "Big Shoulders Display", cursive; */
@@ -277,7 +278,18 @@
     max-width: 380px;
     margin: 0 auto;
   }
-  section.history {
+
+  .majority-header div:first-child {
+    font-size: 4rem;
+    letter-spacing: 3px;
+    font-weight: 900;
+  }
+
+  .majority-header {
+    font-size: 6.5rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    line-height: 5rem;
   }
 
   .cover {
@@ -519,12 +531,12 @@
         <div class="pms">
           <img
             alt="pm2"
+            style={`opacity: ${pm2 ? 1 : 0}`}
             class={`pm2 ${y > animations.pm2.down ? 'bounceOutDown' : 'bounceInUp'} animated`}
             src={pm2 && `/pms/${pm2.image}`} />
           {#if pms[currentPM]}
             <img
               alt="pm1"
-              style={`opacity: ${pm3 ? 1 : 0}`}
               class={`pm1 ${y > animations.pms.pause ? 'left' : ''}`}
               src={`/pms/${pms[currentPM].image}`} />
           {/if}
@@ -549,6 +561,12 @@
       </div>
     </div>
     <section class="history">
+      <div
+        class="majority-header"
+        style={`color: ${parties[pms[currentPM].party]}`}>
+        <div>majority</div>
+        <div>{pms[0].majority[0].majority}</div>
+      </div>
       {#each pms as pm, i}
         <div class="pm " {i}>
           <div class={`trigger mini-pm-container ${i === 0 && 'first-pm'}`} {i}>
