@@ -30,6 +30,11 @@ export const pms = [
     image: "May.png",
     majority: [
       {
+        date: "2017-06-08",
+        majority: -5,
+        seats: 650
+      },
+      {
         date: "2016-07-13",
         majority: 12,
         seats: 650
@@ -43,6 +48,11 @@ export const pms = [
     party: "CON",
     image: "Cameron.png",
     majority: [
+      {
+        date: "2015-05-07",
+        majority: 12,
+        seats: 650
+      },
       {
         date: "2010-05-11",
         majority: 78,
@@ -71,6 +81,11 @@ export const pms = [
     party: "LAB",
     image: "Blair.png",
     majority: [
+      {
+        date: "2005-05-05",
+        majority: 66,
+        seats: 646
+      },
       {
         date: "2001-06-07",
         majority: 167,
@@ -127,7 +142,13 @@ export const pms = [
     nickname: "Callaghan",
     party: "LAB",
     image: "Callaghan.png",
-    majority: []
+    majority: [
+      {
+        date: "1976-04-05",
+        majority: 3,
+        seats: 635
+      }
+    ]
   },
   {
     date: "1974-03-04",
@@ -135,7 +156,13 @@ export const pms = [
     nickname: "Wilson",
     party: "LAB",
     image: "Wilson.png",
-    majority: []
+    majority: [
+      {
+        date: "1974-03-04",
+        majority: -33,
+        seats: 635
+      }
+    ]
   },
   {
     date: "1970-06-19",
@@ -143,7 +170,13 @@ export const pms = [
     nickname: "Ed Heath",
     party: "CON",
     image: "Heath.png",
-    majority: []
+    majority: [
+      {
+        date: "1970-06-19",
+        majority: 30,
+        seats: 630
+      }
+    ]
   },
   {
     date: "1964-10-16",
@@ -151,7 +184,18 @@ export const pms = [
     nickname: "Wilson",
     party: "LAB",
     image: "Wilson.png",
-    majority: []
+    majority: [
+      {
+        date: "1966-03-31",
+        majority: 98,
+        seats: 630
+      },
+      {
+        date: "1964-10-16",
+        majority: 4,
+        seats: 630
+      }
+    ]
   },
   {
     date: "1963-10-19",
@@ -159,7 +203,13 @@ export const pms = [
     nickname: "Doug-Home",
     party: "CON",
     image: "Home.png",
-    majority: []
+    majority: [
+      {
+        date: "1964-10-16",
+        majority: 100,
+        seats: 630
+      }
+    ]
   },
   {
     date: "1957-01-10",
