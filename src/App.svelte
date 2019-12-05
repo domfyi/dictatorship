@@ -180,6 +180,10 @@
     padding-bottom: 1px;
   }
 
+  .first-pm {
+    opacity: 0;
+  }
+
   h1,
   .majority-text,
   .victorian-title {
@@ -467,8 +471,13 @@
       </div>
     </div>
     <section class="history">
-      <div class="pm animated" i={0}>
-        <div class="trigger" i={0} />
+      <div class="pm " i={0}>
+        <div class="animated mini-pm-container">
+          <img
+            class="trigger mini-pm first-pm"
+            i={0}
+            src={`/pms/${pms[0].image}`} />
+        </div>
       </div>
       {#each pms.slice(1) as pm, i}
         <div class="pm " i={i + 1}>
