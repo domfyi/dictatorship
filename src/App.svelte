@@ -173,6 +173,7 @@
     text-align: right;
     display: block;
     font-weight: 200;
+    margin-top: 6px;
   }
 
   header p strong {
@@ -223,7 +224,7 @@
     transform: rotate(-2.6deg);
   }
   header p:first-child {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
   }
   h1 div:first-child {
     font-size: 5rem;
@@ -307,6 +308,10 @@
     .pm1.left {
       transform: scale(0.8);
       transform-origin: bottom;
+    }
+    .majority-text {
+      transform: scale(0.8);
+      transform-origin: right;
     }
   }
 
