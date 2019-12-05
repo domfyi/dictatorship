@@ -197,7 +197,7 @@
     text-transform: uppercase;
     font-size: 4rem;
     /* font-weight: 300; */
-    padding: 4rem 2rem;
+    padding: 2rem;
     border-top: 3px solid #222;
     border-bottom: 3px solid #222;
     margin-left: -20px;
@@ -216,7 +216,7 @@
     font-size: 5rem;
     line-height: 5rem;
     border-bottom: 2px solid #eee;
-    width: 380px;
+    /* width: 380px; */
     margin: 0 auto;
   }
   section.history {
