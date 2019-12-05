@@ -207,6 +207,9 @@
 
   .first-pm {
     opacity: 0;
+    margin-top: 0;
+    padding-top: 0;
+    height: 0;
   }
 
   @media only screen and (max-width: 600px) {
@@ -390,7 +393,7 @@
   }
   .mini-pm-container {
     margin-top: 100px;
-    margin-bottom: 100px;
+    margin-bottom: 16px;
   }
   .mini-pm {
     height: 100px;
@@ -450,6 +453,12 @@
   .pm-avatar-border {
     height: 8px;
     background: blue;
+  }
+  .majority-container {
+    background: #ccc;
+    margin: 0 auto;
+    margin-bottom: 1rem;
+    padding: 1rem;
   }
 </style>
 
@@ -535,6 +544,13 @@
                 style={`background: ${parties[pms[i].party]}`} />
             </div>
           </div>
+          {#each pm.majority as majority, i}
+            <div
+              class="majority-container"
+              style={`width: ${((majority.seats / 2 + majority.majority) / majority.seats) * 100}%`}>
+              majority
+            </div>
+          {/each}
         </div>
       {/each}
       <div class="victorians">
