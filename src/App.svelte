@@ -30,35 +30,74 @@
   };
   onMount(() => {
     var wasAbove = false;
+    let reverse = false;
     let observerDownwards = new IntersectionObserver(
       (entries, observer) => {
         entries.forEach(entry => {
           const isAbove = entry.boundingClientRect.y < entry.rootBounds.y;
-          if (entry.isIntersecting && entry.intersectionRatio < 0.5) {
-            // if (entry.target.getAttribute("i") === "victorians") {
-            //   console.log("victorians", { wasAbove });
-            //   return (currentPM = "victorians");
-            // }
+          //   if (!isAbove && !entry.isIntersecting) return;
+          if (entry.isIntersecting) console.log({ isAbove });
+          if (entry.isIntersecting && !isAbove) reverse = false;
+          if (!isAbove && !entry.isIntersecting) {
+            if (reverse) return;
+            reverse = true;
+            if (entry.target.getAttribute("i") === 0) return;
+            currentPM = (currentPM || 1) - 1;
+            const previous = document
+              .querySelectorAll(".slideOutUp")
+              .forEach(element => {
+                element.classList.remove("slideOutUp");
+                element.classList.add("slideInDown");
+              });
+            console.log(
+              "subtract",
+              currentPM - 1,
+              entry.target.getAttribute("i"),
+              { isAbove },
+              entry.intersectionRatio,
+              entry.intersectionRect,
+              entry.isIntersecting,
+              entry.boundingClientRect,
+              entry.rootBounds
+            );
+            return;
+            // console.log(
+            //   "set",
+            //   currentPM - 1,
+            //   entry.target.getAttribute("i"),
+            //   { isAbove },
+            //   entry.intersectionRatio,
+            //   entry.intersectionRect,
+            //   entry.isIntersecting
+            // );
+            if (entry.target.getAttribute("i") === 0) return;
+            return (currentPM = Math.min(0, (currentPM || 1) - 1));
+          }
+          if (entry.isIntersecting) {
             const previous = document.querySelectorAll(
               ".slideOutUp, .slideInDown"
             );
-            document.querySelectorAll(".mini-pm-container").forEach(element => {
-              element.classList.remove("slideOutUp");
-              element.classList.remove("slideInDown");
-            });
+            document
+              .querySelectorAll(".mini-pm-container .pm-avatar")
+              .forEach(element => {
+                element.classList.remove("slideOutUp");
+                element.classList.remove("slideInDown");
+              });
             previous &&
               previous.classList &&
               previous.classList.add("slideInDown");
-            entry.target.parentElement.classList.add("slideOutUp");
-            // console.log(
-            //   entry.target,
-            //   entry.isIntersecting,
-            //   entry.intersectionRatio
-            // );
+            entry.target
+              .querySelector(".pm-avatar")
+              .classList.add("slideOutUp");
             if (wasAbove) {
-              currentPM = Math.max(0, +entry.target.getAttribute("i"));
+              if (entry.intersectionRatio < 0.5) {
+                currentPM = Math.max(0, +entry.target.getAttribute("i"));
+              }
             } else {
-              currentPM = Math.max(0, +entry.target.getAttribute("i"));
+              //   console.log(entry.intersectionRatio);
+              if (entry.intersectionRatio < 0.5) {
+                currentPM = Math.max(0, +entry.target.getAttribute("i"));
+              }
             }
           }
           wasAbove = isAbove;
@@ -66,24 +105,9 @@
       },
       { rootMargin: "0px 0px -66%", threshold: 0 }
     );
-    // let observerUpward = new IntersectionObserver(
-    //   (entries, observer) => {
-    //     entries.forEach(entry => {
-    //       const isAbove = entry.boundingClientRect.y < entry.rootBounds.y;
-    //       if (entry.isIntersecting) {
-    //         if (wasAbove) {
-    //           currentPM = Math.max(0, +entry.target.getAttribute("i"));
-    //         }
-    //       }
-    //       wasAbove = isAbove;
-    //     });
-    //   },
-    //   { rootMargin: "33% 0px 66% 0px", threshold: 0.33 }
-    // );
-    document.querySelectorAll(".trigger").forEach(pm => {
-      //   observerUpward.observe(pm);
-      observerDownwards.observe(pm);
-    });
+    document
+      .querySelectorAll(".trigger")
+      .forEach(pm => observerDownwards.observe(pm));
   });
 
   //   let observer = new IntersectionObserver(callback, options);
@@ -110,7 +134,7 @@
       secondHalfTime,
       secondHalfDistance
     );
-    console.log({ y, victorianPoint });
+    // console.log({ y, victorianPoint });
     const pmBottom =
       y > up1 && y <= pause
         ? (y - up1) * firstHalfPxPerPx
@@ -230,7 +254,7 @@
     font-size: 5rem;
     line-height: 5rem;
     border-bottom: 2px solid #eee;
-    /* width: 380px; */
+    max-width: 380px;
     margin: 0 auto;
   }
   section.history {
@@ -366,14 +390,13 @@
   }
   .mini-pm-container {
     margin-top: 100px;
-    border-bottom: 1px solid #333;
     margin-bottom: 100px;
   }
   .mini-pm {
     height: 100px;
     filter: grayscale(0.66);
-    opacity: 0.75;
-    margin-bottom: -4px;
+    /* opacity: 0.75; */
+    margin-bottom: -13px;
     font-weight: 100;
   }
   .mini-pm-name {
@@ -420,6 +443,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+  .pm-avatar {
+    border-bottom: 3px solid #222;
+  }
+  .pm-avatar-border {
+    height: 8px;
+    background: blue;
   }
 </style>
 
@@ -495,15 +525,15 @@
       </div>
     </div>
     <section class="history">
-      <div class="pm " i={0}>
-        <div class="animated mini-pm-container first-pm">
-          <img class="trigger mini-pm " i={0} src={`/pms/${pms[0].image}`} />
-        </div>
-      </div>
-      {#each pms.slice(1) as pm, i}
-        <div class="pm " i={i + 1}>
-          <div class="animated mini-pm-container">
-            <img class="trigger mini-pm" i={i + 1} src={`/pms/${pm.image}`} />
+      {#each pms as pm, i}
+        <div class="pm " {i}>
+          <div class={`trigger mini-pm-container ${i === 0 && 'first-pm'}`} {i}>
+            <div class="pm-avatar animated">
+              <img class="animated mini-pm" {i} src={`/pms/${pm.image}`} />
+              <div
+                class="pm-avatar-border"
+                style={`background: ${parties[pms[i].party]}`} />
+            </div>
           </div>
         </div>
       {/each}
