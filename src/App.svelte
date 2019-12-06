@@ -147,10 +147,13 @@
         entries.forEach(entry => {
           const observer_month = entry.target.getAttribute("month");
           const observer_maj = entry.target.getAttribute("maj");
-          console.log(observer_month, entry.isIntersecting);
+          const observer_pm = entry.target.getAttribute("pm");
+          //   console.log(observer_month, entry.isIntersecting);
           if (!observer_month || !entry.isIntersecting) return;
           currentDate = observer_month;
           currentMajority = observer_maj;
+          //   currentPM = observer_pm;
+          currentPM = Math.max(0, +observer_pm);
         });
       },
       { rootMargin: "0px 0px -66%", threshold: 0 }
@@ -569,7 +572,7 @@
   }
   .month.act {
     color: #fff;
-    padding: 8px 0;
+    padding: 7px 0;
   }
 </style>
 
@@ -683,6 +686,7 @@
                           class="month act"
                           style={`background: ${parties[pms[i].party]}`}
                           maj={majority.majority}
+                          pm={i}
                           month={moment(getMajorityDateRange(i, i_m).end)
                             .subtract(i_m_m, 'months')
                             .format('MMM YYYY')}>
@@ -693,19 +697,10 @@
                       <div
                         class="month"
                         maj={majority.majority}
+                        pm={i}
                         month={moment(getMajorityDateRange(i, i_m).end)
                           .subtract(i_m_m, 'months')
-                          .format('MMM YYYY')}>
-                        <!-- <span>
-                          {moment(getMajorityDateRange(i, i_m).end)
-                            .subtract(i_m_m, 'months')
-                            .format('MMM YYYY')}
-                        </span>
-                        |
-                        <span>{pm.nickname}</span>
-                        |
-                        <span>maj {majority.majority}</span> -->
-                      </div>
+                          .format('MMM YYYY')} />
                     {/if}
                   {/each}
                 </div>

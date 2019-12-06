@@ -249,7 +249,7 @@ export const pms = [
     image: "Home.png",
     majority: [
       {
-        date: "1964-10-16",
+        date: "1963-10-19",
         majority: 100,
         seats: 630
       }
