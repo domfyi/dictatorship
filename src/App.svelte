@@ -11,9 +11,10 @@
   let y;
   let height;
   let currentPM = 0;
+  let currentDate = moment(new Date()).format("MMM YYYY");
+  let currentMajority = pms[0].majority[0].majority;
   let majorities_i = 0;
   let acts = {};
-  $: currentDate = majorities[0].date;
   $: pm1 = pms[currentPM || 0];
   $: pm2 = pms[currentPM + 1 || 0];
   $: pm3 = pms[currentPM + 2 || 0];
@@ -105,8 +106,8 @@
             //   entry.intersectionRect,
             //   entry.isIntersecting
             // );
-            if (entry.target.getAttribute("i") === 0) return;
-            return (currentPM = Math.min(0, (currentPM || 1) - 1));
+            // if (entry.target.getAttribute("i") === 0) return;
+            // return (currentPM = Math.min(0, (currentPM || 1) - 1));
           }
           if (entry.isIntersecting) {
             const previous = document.querySelectorAll(
@@ -118,12 +119,12 @@
                 element.classList.remove("slideOutUp");
                 element.classList.remove("slideInDown");
               });
-            previous &&
-              previous.classList &&
-              previous.classList.add("slideInDown");
-            entry.target
-              .querySelector(".pm-avatar")
-              .classList.add("slideOutUp");
+            // previous &&
+            //   previous.classList &&
+            //   previous.classList.add("slideInDown");
+            // entry.target
+            //   .querySelector(".pm-avatar")
+            //   .classList.add("slideOutUp");
             if (wasAbove) {
               if (entry.intersectionRatio < 0.5) {
                 currentPM = Math.max(0, +entry.target.getAttribute("i"));
@@ -140,9 +141,27 @@
       },
       { rootMargin: "0px 0px -66%", threshold: 0 }
     );
+
+    let observerMonth = new IntersectionObserver(
+      (entries, observer) => {
+        entries.forEach(entry => {
+          const observer_month = entry.target.getAttribute("month");
+          const observer_maj = entry.target.getAttribute("maj");
+          console.log(observer_month, entry.isIntersecting);
+          if (!observer_month || !entry.isIntersecting) return;
+          currentDate = observer_month;
+          currentMajority = observer_maj;
+        });
+      },
+      { rootMargin: "0px 0px -66%", threshold: 0 }
+    );
     document
       .querySelectorAll(".trigger")
       .forEach(pm => observerDownwards.observe(pm));
+
+    document
+      .querySelectorAll(".month")
+      .forEach(month => observerMonth.observe(month));
   });
 
   //   let observer = new IntersectionObserver(callback, options);
@@ -540,7 +559,7 @@
     margin: 0 auto;
   }
   .month {
-    padding: 2px;
+    padding: 6px;
     background: #f6f6f6;
     margin-bottom: 4px;
     border-radius: 32px;
@@ -550,6 +569,7 @@
   }
   .month.act {
     color: #fff;
+    padding: 8px 0;
   }
 </style>
 
@@ -598,9 +618,9 @@
 		  `}>
           <div>
             <span class="majority-header-date">
-              {y < animations.pms.stop + 64 ? 'majority' : moment(currentDate).format('MMM YYYY')}
+              {y < animations.pms.stop + 64 ? 'majority' : currentDate}
             </span>
-            <span>{pms[0].majority[0].majority}</span>
+            <span>{currentMajority}</span>
           </div>
         </div>
         <div class="pms">
@@ -661,13 +681,22 @@
                           .format('YYYY-MM')}`] || [] as month_act, i_m_m_a}
                         <div
                           class="month act"
-                          style={`background: ${parties[pms[i].party]}`}>
+                          style={`background: ${parties[pms[i].party]}`}
+                          maj={majority.majority}
+                          month={moment(getMajorityDateRange(i, i_m).end)
+                            .subtract(i_m_m, 'months')
+                            .format('MMM YYYY')}>
                           {month_act.Act}
                         </div>
                       {/each}
                     {:else}
-                      <div class="month">
-                        <span>
+                      <div
+                        class="month"
+                        maj={majority.majority}
+                        month={moment(getMajorityDateRange(i, i_m).end)
+                          .subtract(i_m_m, 'months')
+                          .format('MMM YYYY')}>
+                        <!-- <span>
                           {moment(getMajorityDateRange(i, i_m).end)
                             .subtract(i_m_m, 'months')
                             .format('MMM YYYY')}
@@ -675,7 +704,7 @@
                         |
                         <span>{pm.nickname}</span>
                         |
-                        <span>maj {majority.majority}</span>
+                        <span>maj {majority.majority}</span> -->
                       </div>
                     {/if}
                   {/each}
