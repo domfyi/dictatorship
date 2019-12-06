@@ -1,15 +1,28 @@
 <script>
   import { onMount } from "svelte";
-  import { pms, parties, majorities, majorities_flat } from "./data.js";
+  import {
+    pms,
+    parties,
+    majorities,
+    majorities_flat,
+    getActs
+  } from "./data.js";
   import moment from "moment";
   let y;
   let height;
   let currentPM = 0;
   let majorities_i = 0;
+  let acts = {};
   $: currentDate = majorities[0].date;
   $: pm1 = pms[currentPM || 0];
   $: pm2 = pms[currentPM + 1 || 0];
   $: pm3 = pms[currentPM + 2 || 0];
+
+  const setActs = async () => {
+    acts = await getActs();
+    // console.log({ acts });
+  };
+  setActs();
 
   //   const [pm1, pm2, pm3] = pms;
   $: animations = {
@@ -58,7 +71,7 @@
         entries.forEach(entry => {
           const isAbove = entry.boundingClientRect.y < entry.rootBounds.y;
           //   if (!isAbove && !entry.isIntersecting) return;
-          if (entry.isIntersecting) console.log({ isAbove });
+          //   if (entry.isIntersecting) console.log({ isAbove });
           if (entry.isIntersecting && !isAbove) reverse = false;
           if (!isAbove && !entry.isIntersecting) {
             if (reverse) return;
@@ -71,17 +84,17 @@
                 element.classList.remove("slideOutUp");
                 element.classList.add("slideInDown");
               });
-            console.log(
-              "subtract",
-              currentPM - 1,
-              entry.target.getAttribute("i"),
-              { isAbove },
-              entry.intersectionRatio,
-              entry.intersectionRect,
-              entry.isIntersecting,
-              entry.boundingClientRect,
-              entry.rootBounds
-            );
+            // console.log(
+            //   "subtract",
+            //   currentPM - 1,
+            //   entry.target.getAttribute("i"),
+            //   { isAbove },
+            //   entry.intersectionRatio,
+            //   entry.intersectionRect,
+            //   entry.isIntersecting,
+            //   entry.boundingClientRect,
+            //   entry.rootBounds
+            // );
             return;
             // console.log(
             //   "set",
@@ -174,22 +187,23 @@
   };
   $: pmsBottom = setpmsBottom(y, height);
 
-  const getMajorityStartDate = (i, i_m) => {
+  const getMajorityEndDate = (i, i_m) => {
     let start;
-    if (majorities[i][i_m + 1]) {
-      start = majorities[i][i_m + 1];
+    if (majorities[i][i_m - 1]) {
+      start = majorities[i][i_m - 1];
     } else {
-      start = majorities[i + 1][0];
+      start = [...majorities[i - 1]].pop();
     }
     return start ? start.date : false;
   };
   const getMajorityDateRange = (i, i_m) => {
     if (!majorities[i][i_m]) return { diff: 0 };
-    const end = i + i_m === 0 ? new Date() : new Date(majorities[i][i_m].date);
-    const start = new Date(getMajorityStartDate(i, i_m));
+    const start = new Date(majorities[i][i_m].date);
+    const end =
+      i + i_m === 0 ? new Date() : new Date(getMajorityEndDate(i, i_m));
     if (!start) return { diff: 0 };
     const diff = monthDiff(new Date(start), new Date(end));
-    console.log({ diff });
+    // console.log({ diff });
     return { i, i_m, end, start, diff: Math.max(0, diff) };
   };
 
@@ -534,6 +548,9 @@
     font-size: 0.7rem;
     color: #aaa;
   }
+  .month.act {
+    color: #fff;
+  }
 </style>
 
 <svelte:window bind:scrollY={y} bind:innerHeight={height} />
@@ -635,18 +652,32 @@
                 class="majority-container"
                 style={`width: ${((majority.seats / 2 + majority.majority) / majority.seats) * 100}%`}>
                 <div>
-                  {#each Array(getMajorityDateRange(i, i_m).diff + 1) as _, i_m_m}
-                    <div class="month">
-                      <span>
-                        {moment(getMajorityDateRange(i, i_m).end)
+                  {#each Array(getMajorityDateRange(i, i_m).diff) as _, i_m_m}
+                    {#if acts[`${moment(getMajorityDateRange(i, i_m).end)
+                        .subtract(i_m_m, 'months')
+                        .format('YYYY-MM')}`]}
+                      {#each acts[`${moment(getMajorityDateRange(i, i_m).end)
                           .subtract(i_m_m, 'months')
-                          .format('MMM YYYY')}
-                      </span>
-                      |
-                      <span>{pm.nickname}</span>
-                      |
-                      <span>maj {majority.majority}</span>
-                    </div>
+                          .format('YYYY-MM')}`] || [] as month_act, i_m_m_a}
+                        <div
+                          class="month act"
+                          style={`background: ${parties[pms[i].party]}`}>
+                          {month_act.Act}
+                        </div>
+                      {/each}
+                    {:else}
+                      <div class="month">
+                        <span>
+                          {moment(getMajorityDateRange(i, i_m).end)
+                            .subtract(i_m_m, 'months')
+                            .format('MMM YYYY')}
+                        </span>
+                        |
+                        <span>{pm.nickname}</span>
+                        |
+                        <span>maj {majority.majority}</span>
+                      </div>
+                    {/if}
                   {/each}
                 </div>
               </div>
