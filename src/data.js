@@ -387,7 +387,8 @@ export const pms = [
   }
 ];
 
-export let majorities = [
-  { ...pms[0].majority[0], date: new Date() },
-  ...[...pms].map(pm => pm.majority).flat()
-];
+export let majorities = [...[...pms].map(pm => pm.majority)];
+
+export let majorities_flat = majorities.flat();
+
+console.log({ majorities });

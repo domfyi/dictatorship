@@ -1,10 +1,12 @@
 <script>
   import { onMount } from "svelte";
-  import { pms, parties, majorities } from "./data.js";
+  import { pms, parties, majorities, majorities_flat } from "./data.js";
   import moment from "moment";
   let y;
   let height;
   let currentPM = 0;
+  let majorities_i = 0;
+  $: currentDate = majorities[0].date;
   $: pm1 = pms[currentPM || 0];
   $: pm2 = pms[currentPM + 1 || 0];
   $: pm3 = pms[currentPM + 2 || 0];
@@ -172,6 +174,25 @@
   };
   $: pmsBottom = setpmsBottom(y, height);
 
+  const getMajorityStartDate = (i, i_m) => {
+    let start;
+    if (majorities[i][i_m + 1]) {
+      start = majorities[i][i_m + 1];
+    } else {
+      start = majorities[i + 1][0];
+    }
+    return start ? start.date : false;
+  };
+  const getMajorityDateRange = (i, i_m) => {
+    if (!majorities[i][i_m]) return { diff: 0 };
+    const end = i + i_m === 0 ? new Date() : new Date(majorities[i][i_m].date);
+    const start = new Date(getMajorityStartDate(i, i_m));
+    if (!start) return { diff: 0 };
+    const diff = monthDiff(new Date(start), new Date(end));
+    console.log({ diff });
+    return { i, i_m, end, start, diff: Math.max(0, diff) };
+  };
+
   //   const setMajorityWidth = () => {
 
   // 	  pms[currentPM]
@@ -293,7 +314,7 @@
   .majority-header {
     bottom: 11vh;
     font-size: 2.5rem;
-    letter-spacing: 2px;
+    letter-spacing: 1px;
     font-weight: 900;
     text-transform: uppercase;
     line-height: 2rem;
@@ -308,6 +329,7 @@
   .majority-header-date {
     opacity: 0.5;
     font-size: 2rem;
+    margin-right: -4px;
   }
 
   .cover {
@@ -553,10 +575,13 @@
       <div class="ovelay-inner">
         <div
           class="majority-header"
-          style={`color: ${parties[pms[currentPM].party]}`}>
+          style={`
+		  	color: ${parties[pms[currentPM].party]}; 
+		  	transform: translateY(${y < animations.pms.pause ? 100 : Math.max(0, 250 - (y - animations.pms.pause))}px)
+		  `}>
           <div>
             <span class="majority-header-date">
-              {moment(majorities[0].date).format('MMM YYYY')}
+              {y < animations.pms.stop + 64 ? 'majority' : moment(currentDate).format('MMM YYYY')}
             </span>
             <span>{pms[0].majority[0].majority}</span>
           </div>
@@ -570,7 +595,7 @@
           {#if pms[currentPM]}
             <img
               alt="pm1"
-              class={`pm1 ${y > animations.pms.pause ? 'left' : ''}`}
+              class={`pm1 ${y > (animations.pms.pause + animations.pm2.down) / 2 ? 'left' : ''}`}
               src={`/pms/${pms[currentPM].image}`} />
           {/if}
           <img
@@ -605,17 +630,25 @@
             </div>
           </div>
           {#each pm.majority.filter(Boolean) as majority, i_m}
-            <div
-              class="majority-container"
-              style={`width: ${((majority.seats / 2 + majority.majority) / majority.seats) * 100}%`}>
-              <div>
-                {#each Array(monthDiff(new Date(majorities[i + i_m + 1].date), new Date(majorities[i + i_m].date))) as _, i_m_m}
-                  <div class="month">
-                    {moment(majorities[i + i_m].date)
-                      .subtract(i_m_m + 1, 'months')
-                      .format('MMM YYYY')}
-                  </div>
-                {/each}
+            <div>
+              <div
+                class="majority-container"
+                style={`width: ${((majority.seats / 2 + majority.majority) / majority.seats) * 100}%`}>
+                <div>
+                  {#each Array(getMajorityDateRange(i, i_m).diff + 1) as _, i_m_m}
+                    <div class="month">
+                      <span>
+                        {moment(getMajorityDateRange(i, i_m).end)
+                          .subtract(i_m_m, 'months')
+                          .format('MMM YYYY')}
+                      </span>
+                      |
+                      <span>{pm.nickname}</span>
+                      |
+                      <span>maj {majority.majority}</span>
+                    </div>
+                  {/each}
+                </div>
               </div>
             </div>
           {/each}
