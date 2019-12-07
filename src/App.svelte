@@ -1,32 +1,27 @@
 <script>
   import { onMount, afterUpdate } from "svelte";
-  import {
-    pms,
-    parties,
-    majorities,
-    majorities_flat,
-    getActs
-  } from "./data.js";
+  import { pms, parties, majorities, getActs } from "./data.js";
   import moment from "moment";
+
   let y;
   let height;
+
   let currentPM = 0;
   let currentDate = moment(new Date()).format("MMM YYYY");
   let currentMajority = pms[0].majority[0].majority;
   let currentAct = "";
-  let majorities_i = 0;
+
   let acts = false;
+
   $: pm1 = pms[currentPM || 0];
   $: pm2 = pms[currentPM + 1 || 0];
   $: pm3 = pms[currentPM + 2 || 0];
 
   const setActs = async () => {
     acts = await getActs();
-    // console.log({ acts });
   };
   setActs();
 
-  //   const [pm1, pm2, pm3] = pms;
   $: animations = {
     cover: {
       startFade: (height / 4) * 0
@@ -46,6 +41,7 @@
       stop: 1100
     }
   };
+
   function monthDiff(dateFrom, dateTo) {
     return (
       dateTo.getMonth() -
@@ -54,7 +50,7 @@
     );
   }
 
-  let observerMonth = new IntersectionObserver(
+  let observer = new IntersectionObserver(
     (entries, observer) => {
       entries.forEach(entry => {
         if (!entry.isIntersecting) return;
@@ -72,124 +68,22 @@
     },
     { rootMargin: "0px 0px -66%", threshold: 0 }
   );
-  onMount(() => {
-    var wasAbove = false;
-    let reverse = false;
 
+  onMount(() =>
     window.addEventListener("scroll", e => {
       if (y < animations.pms.stop) {
         currentPM = 0;
         currentAct = false;
-        return;
       }
-    });
-
-    let observerDownwards = new IntersectionObserver(
-      (entries, observer) => {
-        if (y < animations.pms.stop) {
-          currentPM = 0;
-          currentAct = false;
-          return;
-        }
-        entries.forEach(entry => {
-          const isAbove = entry.boundingClientRect.y < entry.rootBounds.y;
-          //   if (!isAbove && !entry.isIntersecting) return;
-          //   if (entry.isIntersecting) console.log({ isAbove });
-          if (entry.isIntersecting && !isAbove) reverse = false;
-          if (!isAbove && !entry.isIntersecting) {
-            if (reverse) return;
-            reverse = true;
-            if (entry.target.getAttribute("i") === 0) return;
-            currentAct = false;
-            currentPM = (currentPM || 1) - 1;
-            const previous = document
-              .querySelectorAll(".slideOutUp")
-              .forEach(element => {
-                element.classList.remove("slideOutUp");
-                element.classList.add("slideInDown");
-              });
-            // console.log(
-            //   "subtract",
-            //   currentPM - 1,
-            //   entry.target.getAttribute("i"),
-            //   { isAbove },
-            //   entry.intersectionRatio,
-            //   entry.intersectionRect,
-            //   entry.isIntersecting,
-            //   entry.boundingClientRect,
-            //   entry.rootBounds
-            // );
-            return;
-            // console.log(
-            //   "set",
-            //   currentPM - 1,
-            //   entry.target.getAttribute("i"),
-            //   { isAbove },
-            //   entry.intersectionRatio,
-            //   entry.intersectionRect,
-            //   entry.isIntersecting
-            // );
-            // if (entry.target.getAttribute("i") === 0) return;
-            // return (currentPM = Math.min(0, (currentPM || 1) - 1));
-          }
-          if (entry.isIntersecting) {
-            const previous = document.querySelectorAll(
-              ".slideOutUp, .slideInDown"
-            );
-            document
-              .querySelectorAll(".mini-pm-container .pm-avatar")
-              .forEach(element => {
-                element.classList.remove("slideOutUp");
-                element.classList.remove("slideInDown");
-              });
-            // previous &&
-            //   previous.classList &&
-            //   previous.classList.add("slideInDown");
-            // entry.target
-            //   .querySelector(".pm-avatar")
-            //   .classList.add("slideOutUp");
-            if (wasAbove) {
-              if (entry.intersectionRatio < 0.5) {
-                currentAct = false;
-                currentPM = Math.max(0, +entry.target.getAttribute("i"));
-              }
-            } else {
-              //   console.log(entry.intersectionRatio);
-              if (entry.intersectionRatio < 0.5) {
-                currentAct = false;
-                currentPM = Math.max(0, +entry.target.getAttribute("i"));
-              }
-            }
-          }
-          wasAbove = isAbove;
-        });
-      },
-      { rootMargin: "0px 0px -66%", threshold: 0 }
-    );
-
-    document
-      .querySelectorAll(".trigger")
-      .forEach(pm => observerDownwards.observe(pm));
-    console.log(acts);
-    document.querySelectorAll(".scroll").forEach(month => {
-      observerMonth.observe(month);
-    });
-    // console.log(document.querySelectorAll(".scroll"));
-  });
+    })
+  );
 
   afterUpdate(() => {
     document.querySelectorAll(".scroll").forEach(month => {
-      observerMonth.unobserve(month);
-      observerMonth.observe(month);
+      observer.unobserve(month);
+      observer.observe(month);
     });
   });
-
-  //   $: acts &&
-  //     document.querySelectorAll(".scroll").forEach(month => {
-  //       observerMonth.observe(month);
-  //     });
-
-  //   let observer = new IntersectionObserver(callback, options);
 
   const setpmsBottom = () => {
     const { up1, pause, up2, stop } = animations.pms;
@@ -204,7 +98,6 @@
     const secondHalfDistance = endPoint - midPoint;
     const secondHalfTime = stop - up2;
     const timeDistanceToPixels = (t, d) => d / t;
-
     const firstHalfPxPerPx = timeDistanceToPixels(
       firstHalfTime,
       firstHalfDistance
@@ -213,9 +106,10 @@
       secondHalfTime,
       secondHalfDistance
     );
-    // console.log({ y, victorianPoint });
     const pmBottom =
-      y > up1 && y <= pause
+      y === 0
+        ? 0
+        : y > up1 && y <= pause
         ? (y - up1) * firstHalfPxPerPx
         : y > pause && y <= up2
         ? midPoint
@@ -226,8 +120,7 @@
         : y > victorianPoint
         ? endPoint + (y - victorianPoint)
         : startPoint;
-    const rounded = Math.round(pmBottom);
-    return rounded;
+    return Math.round(pmBottom);
   };
   $: pmsBottom = setpmsBottom(y, height);
 
@@ -247,15 +140,8 @@
       i + i_m === 0 ? new Date() : new Date(getMajorityEndDate(i, i_m));
     if (!start) return { diff: 0 };
     const diff = monthDiff(new Date(start), new Date(end));
-    // console.log({ diff });
     return { i, i_m, end, start, diff: Math.max(0, diff) };
   };
-
-  //   const setMajorityWidth = () => {
-
-  // 	  pms[currentPM]
-  //   };
-  //   $: majorityWidth = setMajorityWidth(y);
 </script>
 
 <style>
@@ -275,12 +161,10 @@
   .overlay-inner {
     margin: 0 auto;
   }
-
   header {
     height: 100vh;
     padding-bottom: 760px;
   }
-
   header p {
     margin: 0;
     padding: 0;
@@ -289,7 +173,6 @@
     color: #222;
     line-height: 2rem;
   }
-
   p .citation {
     font-size: 1rem;
     opacity: 0.66;
@@ -298,49 +181,32 @@
     font-weight: 200;
     margin-top: 6px;
   }
-
   header p strong {
     border-bottom: 2px solid #333;
     padding-bottom: 1px;
   }
-
   .first-pm {
     opacity: 0;
     margin-top: 0;
     padding-top: 0;
     height: 0;
   }
-
-  @media only screen and (max-width: 600px) {
-    .pms {
-      /* transform: scale(0.7);
-      transform-origin: bottom; */
-    }
-  }
-
   h1,
   .majority-text,
   .victorian-title,
   .majority-header {
-    /* font-family: "Amatic SC", cursive; */
     font-family: "Big Shoulders Display";
-    /* font-family: "Big Shoulders Display", cursive; */
-    /* font-family: "Zilla Slab Highlight", cursive; */
-    /* font-family: "Single Day"; */
   }
-
   .victorian-title {
     font-weight: 100;
     letter-spacing: 2px;
   }
-
   h1 {
     background: url("https://thumbs.gfycat.com/PastelCloudyGelding-size_restricted.gif");
     background-size: cover;
     background-position: center center;
     text-transform: uppercase;
     font-size: 4rem;
-    /* font-weight: 300; */
     padding: 2rem;
     border-top: 3px solid #222;
     border-bottom: 3px solid #222;
@@ -365,10 +231,6 @@
     max-width: 380px;
     margin: 0 auto;
   }
-
-  .majority-header div:first-child {
-  }
-
   .majority-header {
     bottom: 11vh;
     font-size: 2.5rem;
@@ -383,17 +245,14 @@
     text-align: right;
     margin-right: 1rem;
   }
-
   .majority-header-date {
     opacity: 0.5;
     font-size: 2rem;
     margin-right: -4px;
   }
-
   .cover {
     height: 110vh;
   }
-
   .cover-inner {
     height: 75vh;
     display: flex;
@@ -443,7 +302,6 @@
     margin-left: -25vh;
     z-index: 1;
     height: 80%;
-    /* transition: 0.75s all; */
     animation-duration: 0.8s;
 
     margin-bottom: -22px !important;
@@ -457,18 +315,6 @@
   .pm1.left {
     margin-left: -33%;
   }
-
-  @media only screen and (max-width: 600px) {
-    .pm1.left {
-      transform: scale(0.8);
-      transform-origin: bottom;
-    }
-    .majority-text {
-      transform: scale(0.8);
-      transform-origin: right;
-    }
-  }
-
   .pm2 {
     margin-left: 25vh;
     z-index: 2;
@@ -478,12 +324,6 @@
     margin-bottom: -22px !important;
     filter: brightness(75%);
   }
-  /* .pms img.up {
-    margin-bottom: -1px;
-  }
-  .pms img.down {
-    margin-bottom: -33vh;
-  } */
   .scroll-down {
     color: white;
     z-index: 4;
@@ -525,7 +365,6 @@
   .mini-pm {
     height: 100px;
     filter: grayscale(0.66);
-    /* opacity: 0.75; */
     margin-bottom: -13px;
     font-weight: 100;
   }
@@ -553,10 +392,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-  }
-  .victorian-inner {
-    /* padding-top: 50%;
-    transform: translateY(-50%); */
   }
   .victorian-title {
     font-size: 3rem;
@@ -609,6 +444,17 @@
   .current-act .inner {
     padding: 0.5rem;
   }
+
+  @media only screen and (max-width: 600px) {
+    .pm1.left {
+      transform: scale(0.8);
+      transform-origin: bottom;
+    }
+    .majority-text {
+      transform: scale(0.8);
+      transform-origin: right;
+    }
+  }
 </style>
 
 <svelte:window bind:scrollY={y} bind:innerHeight={height} />
@@ -616,7 +462,6 @@
   <main>
     <div class="main-inner">
       <header>
-
         <div
           class="cover"
           style={`
@@ -662,9 +507,9 @@
 		  `}>
             <div>
               <span class="majority-header-date">
-                {y < animations.pms.stop + 64 ? 'majority' : currentDate}
+                {currentDate.split(' ')[0]}
               </span>
-              <span>{currentMajority}</span>
+              <span>{currentDate.split(' ')[1]}</span>
             </div>
           </div>
           <div class="pms">
@@ -703,11 +548,15 @@
         {#each pms as pm, i}
           <div class="pm " {i}>
             <div
-              class={`scroll trigger mini-pm-container ${i === 0 && 'first-pm'}`}
+              class={`scroll mini-pm-container ${i === 0 && 'first-pm'}`}
               pm={i}
               resetAct={true}>
               <div class="pm-avatar animated">
-                <img class="animated mini-pm" {i} src={`/pms/${pm.image}`} />
+                <img
+                  alt="pm"
+                  class="animated mini-pm"
+                  {i}
+                  src={`/pms/${pm.image}`} />
                 <div
                   class="pm-avatar-border"
                   style={`background: ${parties[pms[i].party]}`} />
@@ -756,7 +605,7 @@
         {/each}
         <div class="victorians">
           <div class="victorian-inner">
-            <img src="pms/Victorians.png" />
+            <img alt="victorians" src="pms/Victorians.png" />
             <div class="victorian-title">victorians</div>
           </div>
         </div>
