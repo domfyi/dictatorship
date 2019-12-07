@@ -65,9 +65,9 @@
         const observer_pm = entry.target.getAttribute("pm");
         if (observer_pm) currentPM = Math.max(0, +observer_pm);
         const observer_act = entry.target.getAttribute("act");
-        const observer_test = entry.target.getAttribute("test");
         if (observer_act) currentAct = observer_act;
-        console.log({ observer_month, observer_act, observer_pm });
+        const observer_resetAct = entry.target.getAttribute("resetAct");
+        if (observer_resetAct) currentAct = false;
       });
     },
     { rootMargin: "0px 0px -66%", threshold: 0 }
@@ -79,6 +79,7 @@
     window.addEventListener("scroll", e => {
       if (y < animations.pms.stop) {
         currentPM = 0;
+        currentAct = false;
         return;
       }
     });
@@ -87,6 +88,7 @@
       (entries, observer) => {
         if (y < animations.pms.stop) {
           currentPM = 0;
+          currentAct = false;
           return;
         }
         entries.forEach(entry => {
@@ -701,8 +703,9 @@
         {#each pms as pm, i}
           <div class="pm " {i}>
             <div
-              class={`trigger mini-pm-container ${i === 0 && 'first-pm'}`}
-              {i}>
+              class={`scroll trigger mini-pm-container ${i === 0 && 'first-pm'}`}
+              pm={i}
+              resetAct={true}>
               <div class="pm-avatar animated">
                 <img class="animated mini-pm" {i} src={`/pms/${pm.image}`} />
                 <div
