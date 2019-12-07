@@ -18,6 +18,7 @@ export const getActs = async () => {
   });
   const actMap = arrayofObjects.reduce((list, act) => {
     const key = act.Date.slice(0, 7);
+    if (act["Visible\r"] !== "TRUE\r") return list;
     if (!list[key]) list[key] = [];
     list[key].push(act);
     return list;
@@ -410,7 +411,11 @@ export const pms = [
   }
 ];
 
-export let majorities = [...[...pms].map(pm => pm.majority)];
+export let majorities = [
+  ...[...pms]
+    .filter(pm => pm.majority && pm.majority.length)
+    .map(pm => pm.majority)
+];
 
 export let majorities_flat = majorities.flat();
 
