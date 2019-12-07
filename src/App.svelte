@@ -16,20 +16,19 @@
     setTimeout(() => {
       textFit(document.getElementsByClassName("current-act"), {
         multiLine: true,
-        alignVert: false,
-        alignHoriz: false,
-        alignVertWithFlexbox: false
+        alignVert: true,
+        alignHoriz: true
       });
-    }, 50);
+    }, 0);
   };
 
-  textFit(document.getElementsByClassName("current-act"), {
-    multiLine: true,
-    alignVert: false,
-    alignHoriz: false,
-    alignVertWithFlexbox: false,
-    reProcess: true
-  });
+  //   textFit(document.getElementsByClassName("current-act"), {
+  //     multiLine: true,
+  //     alignVert: false,
+  //     alignHoriz: false,
+  //     alignVertWithFlexbox: false,
+  //     reProcess: true
+  //   });
 
   let acts = false;
 
@@ -223,7 +222,8 @@
   h1,
   .majority-text,
   .victorian-title,
-  .majority-header {
+  .majority-header,
+  .current-act {
     font-family: "Big Shoulders Display";
   }
   .victorian-title {
@@ -469,15 +469,17 @@
     bottom: 18vh;
     background-color: var(--my-color-var);
     color: #222;
-
     border-radius: 0.6em;
+    font-weight: 800;
+    text-transform: uppercase;
+    z-index: 200;
   }
 
   .current-act:after {
     content: "";
     position: absolute;
     left: 0;
-    top: 50%;
+    top: 75%;
     width: 0;
     height: 0;
     border: 29px solid transparent;
@@ -489,7 +491,7 @@
     margin-left: -29px;
   }
   .current-act .inner {
-    padding: 0.5rem;
+    padding: 0.5rem 1rem;
   }
 
   @media only screen and (max-width: 600px) {
