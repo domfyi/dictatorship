@@ -6,6 +6,7 @@
 
   let y;
   let height;
+  let observerIsSet = false;
 
   let currentPM = 0;
   let currentDate = moment(new Date()).format("MMM YYYY");
@@ -73,6 +74,8 @@
     (entries, observer) => {
       entries.forEach(entry => {
         if (!entry.isIntersecting) return;
+        // if (entry.intersectionRatio === 1) return;
+        console.log(entry.intersectionRatio);
         const observer_month = entry.target.getAttribute("month");
         if (observer_month) currentDate = observer_month;
         const observer_maj = entry.target.getAttribute("maj");
@@ -107,10 +110,12 @@
   );
 
   afterUpdate(() => {
+    if (observerIsSet || !acts) return;
     document.querySelectorAll(".scroll").forEach(month => {
       observer.unobserve(month);
       observer.observe(month);
     });
+    observerIsSet = true;
   });
 
   const setpmsBottom = () => {
