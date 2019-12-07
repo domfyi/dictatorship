@@ -411,4 +411,4 @@ export let majorities = [...[...pms].map(pm => pm.majority)];
 
 export let majorities_flat = majorities.flat();
 
-console.log({ majorities });
+// console.log({ majorities });

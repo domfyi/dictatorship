@@ -1,5 +1,5 @@
 <script>
-  import { onMount } from "svelte";
+  import { onMount, afterUpdate } from "svelte";
   import {
     pms,
     parties,
@@ -13,8 +13,9 @@
   let currentPM = 0;
   let currentDate = moment(new Date()).format("MMM YYYY");
   let currentMajority = pms[0].majority[0].majority;
+  let currentAct = "";
   let majorities_i = 0;
-  let acts = {};
+  let acts = false;
   $: pm1 = pms[currentPM || 0];
   $: pm2 = pms[currentPM + 1 || 0];
   $: pm3 = pms[currentPM + 2 || 0];
@@ -52,6 +53,25 @@
       12 * (dateTo.getFullYear() - dateFrom.getFullYear())
     );
   }
+
+  let observerMonth = new IntersectionObserver(
+    (entries, observer) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const observer_month = entry.target.getAttribute("month");
+        if (observer_month) currentDate = observer_month;
+        const observer_maj = entry.target.getAttribute("maj");
+        if (observer_maj) currentMajority = observer_maj;
+        const observer_pm = entry.target.getAttribute("pm");
+        if (observer_pm) currentPM = Math.max(0, +observer_pm);
+        const observer_act = entry.target.getAttribute("act");
+        const observer_test = entry.target.getAttribute("test");
+        if (observer_act) currentAct = observer_act;
+        console.log({ observer_month, observer_act, observer_pm });
+      });
+    },
+    { rootMargin: "0px 0px -66%", threshold: 0 }
+  );
   onMount(() => {
     var wasAbove = false;
     let reverse = false;
@@ -78,6 +98,7 @@
             if (reverse) return;
             reverse = true;
             if (entry.target.getAttribute("i") === 0) return;
+            currentAct = false;
             currentPM = (currentPM || 1) - 1;
             const previous = document
               .querySelectorAll(".slideOutUp")
@@ -127,11 +148,13 @@
             //   .classList.add("slideOutUp");
             if (wasAbove) {
               if (entry.intersectionRatio < 0.5) {
+                currentAct = false;
                 currentPM = Math.max(0, +entry.target.getAttribute("i"));
               }
             } else {
               //   console.log(entry.intersectionRatio);
               if (entry.intersectionRatio < 0.5) {
+                currentAct = false;
                 currentPM = Math.max(0, +entry.target.getAttribute("i"));
               }
             }
@@ -142,30 +165,27 @@
       { rootMargin: "0px 0px -66%", threshold: 0 }
     );
 
-    let observerMonth = new IntersectionObserver(
-      (entries, observer) => {
-        entries.forEach(entry => {
-          const observer_month = entry.target.getAttribute("month");
-          const observer_maj = entry.target.getAttribute("maj");
-          const observer_pm = entry.target.getAttribute("pm");
-          //   console.log(observer_month, entry.isIntersecting);
-          if (!observer_month || !entry.isIntersecting) return;
-          currentDate = observer_month;
-          currentMajority = observer_maj;
-          //   currentPM = observer_pm;
-          currentPM = Math.max(0, +observer_pm);
-        });
-      },
-      { rootMargin: "0px 0px -66%", threshold: 0 }
-    );
     document
       .querySelectorAll(".trigger")
       .forEach(pm => observerDownwards.observe(pm));
-
-    document
-      .querySelectorAll(".month")
-      .forEach(month => observerMonth.observe(month));
+    console.log(acts);
+    document.querySelectorAll(".scroll").forEach(month => {
+      observerMonth.observe(month);
+    });
+    // console.log(document.querySelectorAll(".scroll"));
   });
+
+  afterUpdate(() => {
+    document.querySelectorAll(".scroll").forEach(month => {
+      observerMonth.unobserve(month);
+      observerMonth.observe(month);
+    });
+  });
+
+  //   $: acts &&
+  //     document.querySelectorAll(".scroll").forEach(month => {
+  //       observerMonth.observe(month);
+  //     });
 
   //   let observer = new IntersectionObserver(callback, options);
 
@@ -574,148 +594,171 @@
     color: #fff;
     padding: 7px 0;
   }
+  .current-act {
+    border-radius: 8px;
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    left: 33%;
+    bottom: 18vh;
+    background: #ccc;
+    color: #222;
+  }
+  .current-act .inner {
+    padding: 0.5rem;
+  }
 </style>
 
 <svelte:window bind:scrollY={y} bind:innerHeight={height} />
-<main>
-  <div class="main-inner">
-    <header>
+{#if acts}
+  <main>
+    <div class="main-inner">
+      <header>
 
-      <div
-        class="cover"
-        style={`
+        <div
+          class="cover"
+          style={`
 		background-image: linear-gradient(
 			rgba(179,179,179,1), 
 			rgba(179,179,179,${y < animations.cover.startFade ? 1 : 1 - (y - animations.cover.startFade) / 1000}),
 			rgba(179,179,179,${y < animations.cover.startFade ? 1 : 1 - (y - animations.cover.startFade) / 100})
 		);
 	  `}>
-        <div class="cover-inner">
-          <div
-            class="cover-title"
-            style={`margin-top: -${Math.min(y, 1000)}px`}>
-            <p>The UK has been described as an</p>
-            <h1>
-              <div>Elective</div>
-              <div>Dictatorship</div>
-            </h1>
-            <p>
-              Because a government elected with a big enough majority can
-              <strong>essentially do what it wants</strong>
-              .
-              <span class="citation">— Lord Hailsham</span>
-            </p>
+          <div class="cover-inner">
+            <div
+              class="cover-title"
+              style={`margin-top: -${Math.min(y, 1000)}px`}>
+              <p>The UK has been described as an</p>
+              <h1>
+                <div>Elective</div>
+                <div>Dictatorship</div>
+              </h1>
+              <p>
+                Because a government elected with a big enough majority can
+                <strong>essentially do what it wants</strong>
+                .
+                <span class="citation">— Lord Hailsham</span>
+              </p>
+            </div>
           </div>
         </div>
-      </div>
-    </header>
-    <div
-      class="overlay"
-      style={`bottom: ${pmsBottom}px; background: ${y > height ? '#fff' : 'none'}`}>
-      <div class="ovelay-inner">
-        <div
-          class="majority-header"
-          style={`
+      </header>
+      <div
+        class="overlay"
+        style={`bottom: ${pmsBottom}px; background: ${y > height ? '#fff' : 'none'}`}>
+        <div class="ovelay-inner">
+          {#if currentAct}
+            <div class="current-act">
+              <div class="inner">{currentAct}</div>
+            </div>
+          {/if}
+          <div
+            class="majority-header"
+            style={`
 		  	color: ${parties[pms[currentPM].party]}; 
 		  	transform: translateY(${y < animations.pms.pause ? 100 : Math.max(0, 250 - (y - animations.pms.pause))}px)
 		  `}>
-          <div>
-            <span class="majority-header-date">
-              {y < animations.pms.stop + 64 ? 'majority' : currentDate}
-            </span>
-            <span>{currentMajority}</span>
-          </div>
-        </div>
-        <div class="pms">
-          <img
-            alt="pm2"
-            style={`opacity: ${pm2 ? 1 : 0}`}
-            class={`pm2 ${y > animations.pm2.down ? 'bounceOutDown' : 'bounceInUp'} animated`}
-            src={pm2 && `/pms/${pm2.image}`} />
-          {#if pms[currentPM]}
-            <img
-              alt="pm1"
-              class={`pm1 ${y > (animations.pms.pause + animations.pm2.down) / 2 ? 'left' : ''}`}
-              src={`/pms/${pms[currentPM].image}`} />
-          {/if}
-          <img
-            alt="pm3"
-            style={`opacity: ${pm3 ? 1 : 0}`}
-            class={`pm3 ${y > animations.pm3.down ? 'bounceOutDown' : 'bounceInUp'} animated`}
-            src={pm3 && `/pms/${pm3.image}`} />
-        </div>
-        <div
-          class={`majority`}
-          style={`background: ${parties[pms[currentPM].party]}`}>
-          <span
-            class="majority-text"
-            style={`transform: translateY(${y < animations.pms.pause ? 100 : Math.max(0, 100 - (y - animations.pms.pause))}px)`}>
-            {pms[currentPM].nickname}
-          </span>
-        </div>
-        <span class="scroll-down" style="opacity: {1 - Math.max(0, y / 80)}">
-          ˅
-        </span>
-      </div>
-    </div>
-    <section class="history">
-      {#each pms as pm, i}
-        <div class="pm " {i}>
-          <div class={`trigger mini-pm-container ${i === 0 && 'first-pm'}`} {i}>
-            <div class="pm-avatar animated">
-              <img class="animated mini-pm" {i} src={`/pms/${pm.image}`} />
-              <div
-                class="pm-avatar-border"
-                style={`background: ${parties[pms[i].party]}`} />
+            <div>
+              <span class="majority-header-date">
+                {y < animations.pms.stop + 64 ? 'majority' : currentDate}
+              </span>
+              <span>{currentMajority}</span>
             </div>
           </div>
-          {#each pm.majority.filter(Boolean) as majority, i_m}
-            <div>
-              <div
-                class="majority-container"
-                style={`width: ${((majority.seats / 2 + majority.majority) / majority.seats) * 100}%`}>
-                <div>
-                  {#each Array(getMajorityDateRange(i, i_m).diff) as _, i_m_m}
-                    {#if acts[`${moment(getMajorityDateRange(i, i_m).end)
-                        .subtract(i_m_m, 'months')
-                        .format('YYYY-MM')}`]}
-                      {#each acts[`${moment(getMajorityDateRange(i, i_m).end)
+          <div class="pms">
+            <img
+              alt="pm2"
+              style={`opacity: ${pm2 ? 1 : 0}`}
+              class={`pm2 ${y > animations.pm2.down ? 'bounceOutDown' : 'bounceInUp'} animated`}
+              src={pm2 && `/pms/${pm2.image}`} />
+            {#if pms[currentPM]}
+              <img
+                alt="pm1"
+                class={`pm1 ${y > (animations.pms.pause + animations.pm2.down) / 2 ? 'left' : ''}`}
+                src={`/pms/${pms[currentPM].image}`} />
+            {/if}
+            <img
+              alt="pm3"
+              style={`opacity: ${pm3 ? 1 : 0}`}
+              class={`pm3 ${y > animations.pm3.down ? 'bounceOutDown' : 'bounceInUp'} animated`}
+              src={pm3 && `/pms/${pm3.image}`} />
+          </div>
+          <div
+            class={`majority`}
+            style={`background: ${parties[pms[currentPM].party]}`}>
+            <span
+              class="majority-text"
+              style={`transform: translateY(${y < animations.pms.pause ? 100 : Math.max(0, 100 - (y - animations.pms.pause))}px)`}>
+              {pms[currentPM].nickname}
+            </span>
+          </div>
+          <span class="scroll-down" style="opacity: {1 - Math.max(0, y / 80)}">
+            ˅
+          </span>
+        </div>
+      </div>
+      <section class="history">
+        {#each pms as pm, i}
+          <div class="pm " {i}>
+            <div
+              class={`trigger mini-pm-container ${i === 0 && 'first-pm'}`}
+              {i}>
+              <div class="pm-avatar animated">
+                <img class="animated mini-pm" {i} src={`/pms/${pm.image}`} />
+                <div
+                  class="pm-avatar-border"
+                  style={`background: ${parties[pms[i].party]}`} />
+              </div>
+            </div>
+            {#each pm.majority.filter(Boolean) as majority, i_m}
+              <div>
+                <div
+                  class="majority-container"
+                  style={`width: ${((majority.seats / 2 + majority.majority) / majority.seats) * 100}%`}>
+                  <div>
+                    {#each Array(getMajorityDateRange(i, i_m).diff) as _, i_m_m}
+                      {#if acts[`${moment(getMajorityDateRange(i, i_m).end)
                           .subtract(i_m_m, 'months')
-                          .format('YYYY-MM')}`] || [] as month_act, i_m_m_a}
+                          .format('YYYY-MM')}`]}
+                        {#each acts[`${moment(getMajorityDateRange(i, i_m).end)
+                            .subtract(i_m_m, 'months')
+                            .format('YYYY-MM')}`] || [] as month_act, i_m_m_a}
+                          <div
+                            class="scroll month act"
+                            style={`background: ${parties[pms[i].party]}`}
+                            maj={majority.majority}
+                            act={month_act.Simple}
+                            pm={i}
+                            month={moment(getMajorityDateRange(i, i_m).end)
+                              .subtract(i_m_m, 'months')
+                              .format('MMM YYYY')}>
+                            {month_act.Act}
+                          </div>
+                        {/each}
+                      {:else}
                         <div
-                          class="month act"
-                          style={`background: ${parties[pms[i].party]}`}
+                          class="scroll month"
                           maj={majority.majority}
                           pm={i}
                           month={moment(getMajorityDateRange(i, i_m).end)
                             .subtract(i_m_m, 'months')
-                            .format('MMM YYYY')}>
-                          {month_act.Act}
-                        </div>
-                      {/each}
-                    {:else}
-                      <div
-                        class="month"
-                        maj={majority.majority}
-                        pm={i}
-                        month={moment(getMajorityDateRange(i, i_m).end)
-                          .subtract(i_m_m, 'months')
-                          .format('MMM YYYY')} />
-                    {/if}
-                  {/each}
+                            .format('MMM YYYY')} />
+                      {/if}
+                    {/each}
+                  </div>
                 </div>
               </div>
-            </div>
-          {/each}
+            {/each}
+          </div>
+        {/each}
+        <div class="victorians">
+          <div class="victorian-inner">
+            <img src="pms/Victorians.png" />
+            <div class="victorian-title">victorians</div>
+          </div>
         </div>
-      {/each}
-      <div class="victorians">
-        <div class="victorian-inner">
-          <img src="pms/Victorians.png" />
-          <div class="victorian-title">victorians</div>
-        </div>
-      </div>
-      <div class="created-by">created by</div>
-    </section>
-  </div>
-</main>
+        <div class="created-by">created by</div>
+      </section>
+    </div>
+  </main>
+{/if}
