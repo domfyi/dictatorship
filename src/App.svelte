@@ -2,6 +2,7 @@
   import { onMount, afterUpdate } from "svelte";
   import { pms, parties, majorities, getActs } from "./data.js";
   import moment from "moment";
+  import textFit from "textfit";
 
   let y;
   let height;
@@ -10,6 +11,25 @@
   let currentDate = moment(new Date()).format("MMM YYYY");
   let currentMajority = pms[0].majority[0].majority;
   let currentAct = "";
+
+  const setTextSize = () => {
+    setTimeout(() => {
+      textFit(document.getElementsByClassName("current-act"), {
+        multiLine: true,
+        alignVert: false,
+        alignHoriz: false,
+        alignVertWithFlexbox: false
+      });
+    }, 50);
+  };
+
+  textFit(document.getElementsByClassName("current-act"), {
+    multiLine: true,
+    alignVert: false,
+    alignHoriz: false,
+    alignVertWithFlexbox: false,
+    reProcess: true
+  });
 
   let acts = false;
 
@@ -61,9 +81,18 @@
         const observer_pm = entry.target.getAttribute("pm");
         if (observer_pm) currentPM = Math.max(0, +observer_pm);
         const observer_act = entry.target.getAttribute("act");
-        if (observer_act) currentAct = observer_act;
+        if (observer_act && observer_act !== currentAct) {
+          console.log("set", observer_act, currentAct);
+          currentAct = "";
+          setTimeout(() => {
+            currentAct = observer_act;
+            setTextSize();
+          }, 50);
+        }
         const observer_resetAct = entry.target.getAttribute("resetAct");
-        if (observer_resetAct) currentAct = false;
+        if (observer_resetAct && observer_pm !== currentPM) currentAct = false;
+        // console.log({ observer_resetAct, ir: entry.intersectionRatio });
+        // if (observer_resetAct) currentAct = false;
       });
     },
     { rootMargin: "0px 0px -66%", threshold: 0 }
@@ -438,8 +467,26 @@
     right: 0.5rem;
     left: 33%;
     bottom: 18vh;
-    background: #ccc;
+    background-color: var(--my-color-var);
     color: #222;
+
+    border-radius: 0.6em;
+  }
+
+  .current-act:after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 0;
+    height: 0;
+    border: 29px solid transparent;
+    border-right-color: var(--my-color-var);
+    z-index: 200;
+    border-left: 0;
+    border-bottom: 0;
+    margin-top: -14.5px;
+    margin-left: -29px;
   }
   .current-act .inner {
     padding: 0.5rem;
@@ -495,7 +542,9 @@
         style={`bottom: ${pmsBottom}px; background: ${y > height ? '#fff' : 'none'}`}>
         <div class="ovelay-inner">
           {#if currentAct}
-            <div class="current-act">
+            <div
+              class="current-act"
+              style={`--my-color-var: ${parties[pms[currentPM].party].replace(')', ',0.5)')};`}>
               <div class="inner">{currentAct}</div>
             </div>
           {/if}

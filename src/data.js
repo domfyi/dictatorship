@@ -1,18 +1,21 @@
 import { convertCSVToArray } from "convert-csv-to-array";
 
 export const parties = {
-  CON: "rgb(0, 144, 235);",
+  CON: "rgb(0, 144, 235)",
   LAB: "rgb(227, 7, 2)",
   LIB: "rgb(232, 160, 0)"
 };
 
 const acts_url =
-  "https://docs.google.com/spreadsheets/d/e/2PACX-1vTmccYW6VEGjZRN926Bi8v-QTbzmLW9mcTM0UvMzmF8iH3zel_yHdTPand5eM_VpY6B5fgv18j-SBp8/pub?output=csv";
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vTmccYW6VEGjZRN926Bi8v-QTbzmLW9mcTM0UvMzmF8iH3zel_yHdTPand5eM_VpY6B5fgv18j-SBp8/pub?gid=0&single=true&output=tsv";
 
 export const getActs = async () => {
   const data = await fetch(acts_url);
-  const csv = await data.text();
-  const arrayofObjects = convertCSVToArray(csv, { header: false });
+  const tsv = await data.text();
+  const arrayofObjects = convertCSVToArray(tsv, {
+    header: false,
+    separator: "\t"
+  });
   const actMap = arrayofObjects.reduce((list, act) => {
     const key = act.Date.slice(0, 7);
     if (!list[key]) list[key] = [];
