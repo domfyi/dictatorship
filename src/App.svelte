@@ -136,7 +136,7 @@
     const midPoint = height - height / 2 - pmHeight / 2;
     const endPoint = height - pmHeight + 4;
     const victorianPoint =
-      document.documentElement.scrollHeight - height * 2 - height / 3;
+      document.documentElement.scrollHeight - height - height / 3;
     const firstHalfDistance = midPoint - startPoint;
     const firstHalfTime = pause - up1;
     const secondHalfDistance = endPoint - midPoint;
@@ -150,6 +150,10 @@
       secondHalfTime,
       secondHalfDistance
     );
+    if (y > victorianPoint) {
+      currentActName = "";
+      currentAct = "";
+    }
     const pmBottom =
       y === 0
         ? 0
@@ -445,21 +449,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    background: #444;
   }
   .victorian-title {
     font-size: 3rem;
     text-transform: uppercase;
     margin: 1rem;
-  }
-  .victorians img {
-    height: 50vh;
-  }
-  .created-by {
-    height: 100vh;
-    background: #444;
-    display: flex;
-    align-items: center;
-    justify-content: center;
   }
   .pm-avatar {
     border-bottom: 3px solid #222;
@@ -712,12 +707,8 @@
           </div>
         {/each}
         <div class="victorians">
-          <div class="victorian-inner">
-            <img alt="victorians" src="pms/Victorians.png" />
-            <div class="victorian-title">victorians</div>
-          </div>
+          <div class="victorian-inner">created by</div>
         </div>
-        <div class="created-by">created by</div>
       </section>
     </div>
   </main>
