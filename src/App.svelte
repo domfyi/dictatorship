@@ -14,6 +14,7 @@
   let currentMajority = pms[0].majority[0].majority;
   let currentAct = "";
   let currentActName = "";
+  let currentActLink = "";
 
   const setTextSize = () => {
     setTimeout(() => {
@@ -96,6 +97,8 @@
       if (observer_pm) currentPM = Math.max(0, +observer_pm);
       const observer_actname = entry.target.getAttribute("actName");
       if (observer_actname) currentActName = observer_actname;
+      const observer_actlink = entry.target.getAttribute("actLink");
+      if (observer_actname) currentActLink = observer_actlink;
       const observer_act = entry.target.getAttribute("act");
       if (observer_act && observer_act !== currentAct) {
         currentAct = "";
@@ -108,6 +111,7 @@
       if (observer_resetAct && observer_pm !== currentPM) {
         currentAct = false;
         currentActName = false;
+        currentActLink = false;
       }
     },
     { rootMargin: "-36% 0 -63% 0", threshold: 0 }
@@ -117,8 +121,9 @@
     window.addEventListener("scroll", e => {
       if (y < animations.pms.stop) {
         currentPM = 0;
-        currentAct = "";
-        currentActName = "";
+        currentAct = false;
+        currentActName = false;
+        currentActLink = false;
         currentSeats = pms[0].majority[0].seats;
         currentMajority = pms[0].majority[0].majority;
         currentDate = moment(new Date()).format("MMM YYYY");
@@ -157,8 +162,9 @@
       secondHalfDistance
     );
     if (y > victorianPoint) {
-      currentActName = "";
-      currentAct = "";
+      currentActName = false;
+      currentAct = false;
+      currentActLink = false;
     }
     const pmBottom =
       y === 0
@@ -620,15 +626,17 @@
       </header>
       {#if currentAct}
         <div class="current-act-name">
-          <div
-            style={`background: ${parties[pms[currentPM].party]}; width: ${calculateMajorityWidth(
-              {
-                majority: +currentMajority,
-                seats: +currentSeats
-              }
-            )}%`}>
-            {currentActName}
-          </div>
+          <a href={currentActLink} target="_blank">
+            <div
+              style={`background: ${parties[pms[currentPM].party]}; width: ${calculateMajorityWidth(
+                {
+                  majority: +currentMajority,
+                  seats: +currentSeats
+                }
+              )}%`}>
+              {currentActName}
+            </div>
+          </a>
         </div>
       {/if}
       <div
@@ -731,23 +739,26 @@
                           i_m,
                           i_m_m
                         }) as month_act, i_m_m_a}
-                          <div
-                            class="scroll month act"
-                            style={`background: ${parties[pms[i].party]}; opacity: ${month_act.Simple === currentAct ? 0 : 1}`}
-                            maj={majority.majority}
-                            act={month_act.Simple}
-                            actName={month_act.Act}
-                            seats={majority.seats}
-                            pm={i}
-                            month={moment(getMajorityDateRange(i, i_m).end)
-                              .subtract(i_m_m, 'months')
-                              .format('MMM YYYY')}>
-                            <span
-                              class="act-name"
-                              style={`opacity: ${i === currentPM ? 1 : 0.2}`}>
-                              {month_act.Act}
-                            </span>
-                          </div>
+                          <a href={month_act.Link} target="_blank">
+                            <div
+                              class="scroll month act"
+                              style={`background: ${parties[pms[i].party]}; opacity: ${month_act.Simple === currentAct ? 0 : 1}`}
+                              maj={majority.majority}
+                              act={month_act.Simple}
+                              actName={month_act.Act}
+                              actLink={month_act.Link}
+                              seats={majority.seats}
+                              pm={i}
+                              month={moment(getMajorityDateRange(i, i_m).end)
+                                .subtract(i_m_m, 'months')
+                                .format('MMM YYYY')}>
+                              <span
+                                class="act-name"
+                                style={`opacity: ${i === currentPM ? 1 : 0.2}`}>
+                                {month_act.Act}
+                              </span>
+                            </div>
+                          </a>
                           {#if getActsFromMonth({ i, i_m, i_m_m }).length}
                             <div
                               class="scroll month"
