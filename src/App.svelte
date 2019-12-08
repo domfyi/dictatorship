@@ -268,7 +268,8 @@
   .majority-text,
   .victorian-title,
   .majority-header,
-  .current-act {
+  .current-act,
+  .victorians {
     font-family: "Big Shoulders Display";
   }
   .victorian-title {
@@ -471,6 +472,8 @@
     justify-content: center;
     background: #444;
     color: #676767;
+    font-weight: 700;
+    letter-spacing: 1px;
   }
   .victorian-title {
     font-size: 3rem;
@@ -574,9 +577,10 @@
   }
   .author .domfyi {
     margin-top: 3px;
-    font-size: 1.2rem;
+    font-size: 1.25rem;
     color: #fff;
-    margin-right: -4px;
+    margin-right: -8px;
+    font-weight: 900;
   }
 
   @media only screen and (max-width: 600px) {

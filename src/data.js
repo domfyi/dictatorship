@@ -17,7 +17,7 @@ export const getActs = async () => {
     separator: "\t"
   });
   const actMap = arrayofObjects.reduce((list, act) => {
-    if (!act.Date) return list;
+    if (!act.Date || !act.Date.length) return list;
     const key = act.Date.slice(0, 7);
     if (act["Visible"] !== "TRUE") return list;
     if (!list[key]) list[key] = [];
