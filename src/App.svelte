@@ -36,6 +36,31 @@
   };
   setActs();
 
+  const unique_majorities = [
+    ...new Set(majorities.flat().map(({ majority }) => majority))
+  ];
+  const min_majority = 0;
+  const ave_majority =
+    unique_majorities.reduce((sum, x) => sum + x) / unique_majorities.length;
+  const max_majority = Math.max(...unique_majorities);
+  const half_star_first_half = ave_majority / 5;
+  const half_star_second_half = (max_majority - ave_majority) / 5;
+  const star_boundries = [
+    0,
+    half_star_first_half * 2,
+    half_star_first_half * 4,
+    ave_majority + half_star_second_half,
+    ave_majority + half_star_second_half * 3
+  ];
+  console.log({
+    ave_majority,
+    max_majority,
+    star_boundries,
+    unique_majorities,
+    sum: unique_majorities.reduce((sum, x) => sum + x),
+    len: unique_majorities.length
+  });
+
   $: animations = {
     cover: {
       startFade: (height / 4) * 0
@@ -524,6 +549,18 @@
     margin: 0 auto;
   }
 
+  .majority-title {
+    margin-top: 2.5rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    color: #c6c6c6;
+  }
+
+  .fa-star {
+    margin: 2px 0;
+  }
+
   @media only screen and (max-width: 600px) {
     .pm1.left {
       transform: scale(0.8);
@@ -658,6 +695,17 @@
             </div>
             {#each pm.majority.filter(Boolean) as majority, i_m}
               <div>
+                <div class="majority-title">
+                  <div>majority</div>
+
+                  <div>
+                    {#each new Array(5) as _, i_star}
+                      <i
+                        class="fas fa-star"
+                        style={`color: ${majority.majority > star_boundries[i_star] ? 'rgb(232, 209, 0)' : '#c6c6c6'};`} />
+                    {/each}
+                  </div>
+                </div>
                 <div
                   class="majority-container"
                   style={`width: ${calculateMajorityWidth(majority)}%`}>

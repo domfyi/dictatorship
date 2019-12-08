@@ -47,7 +47,6 @@ export const acts = [
 
 export const pms = [
   {
-    date: "2019-07-24",
     name: "Boris Johnson",
     nickname: "Boris",
     party: "CON",
@@ -61,7 +60,6 @@ export const pms = [
     ]
   },
   {
-    date: "2016-07-13",
     name: "Theresa May",
     nickname: "Theresa",
     party: "CON",
@@ -80,7 +78,6 @@ export const pms = [
     ]
   },
   {
-    date: "2010-05-11",
     name: "David Cameron",
     nickname: "Cameron",
     party: "CON",
@@ -99,7 +96,6 @@ export const pms = [
     ]
   },
   {
-    date: "2007-06-27",
     name: "Gordon Brown",
     nickname: "Brown",
     party: "LAB",
@@ -113,7 +109,6 @@ export const pms = [
     ]
   },
   {
-    date: "1997-05-02",
     name: "Tony Blair",
     nickname: "Blair",
     party: "LAB",
@@ -137,7 +132,6 @@ export const pms = [
     ]
   },
   {
-    date: "1990-11-28",
     name: "John Major",
     nickname: "Major",
     party: "CON",
@@ -156,7 +150,6 @@ export const pms = [
     ]
   },
   {
-    date: "1979-05-04",
     name: "Margeret Thatcher",
     nickname: "Maggie",
     party: "CON",
@@ -180,7 +173,6 @@ export const pms = [
     ]
   },
   {
-    date: "1976-04-05",
     name: "James Callaghan",
     nickname: "Callaghan",
     party: "LAB",
@@ -194,7 +186,6 @@ export const pms = [
     ]
   },
   {
-    date: "1974-03-04",
     name: "Harold Wilson",
     nickname: "Wilson",
     party: "LAB",
@@ -214,7 +205,6 @@ export const pms = [
     ]
   },
   {
-    date: "1970-06-19",
     name: "Edward Heath",
     nickname: "Ed Heath",
     party: "CON",
@@ -228,7 +218,6 @@ export const pms = [
     ]
   },
   {
-    date: "1964-10-16",
     name: "Harold Wilson",
     nickname: "Wilson",
     party: "LAB",
@@ -247,7 +236,6 @@ export const pms = [
     ]
   },
   {
-    date: "1963-10-19",
     name: "Alec Douglas-Home",
     nickname: "Doug-Home",
     party: "CON",
@@ -261,7 +249,6 @@ export const pms = [
     ]
   },
   {
-    date: "1957-01-10",
     name: "Harold Macmillan",
     nickname: "Macmillan",
     party: "CON",
@@ -280,7 +267,6 @@ export const pms = [
     ]
   },
   {
-    date: "1955-04-06",
     name: "Anthony Eden",
     nickname: "Eden",
     party: "CON",
@@ -299,7 +285,6 @@ export const pms = [
     ]
   },
   {
-    date: "1951-10-26",
     name: "Winston Churchill",
     nickname: "Churchill",
     party: "CON",
@@ -313,7 +298,6 @@ export const pms = [
     ]
   },
   {
-    date: "1945-07-05",
     name: "Clement Attlee",
     nickname: "Atlee",
     party: "LAB",
@@ -434,5 +418,3 @@ export let majorities = [
     .filter(pm => pm.majority && pm.majority.length)
     .map(pm => pm.majority)
 ];
-
-export let majorities_flat = majorities.flat();
