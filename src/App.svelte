@@ -10,8 +10,10 @@
 
   let currentPM = 0;
   let currentDate = moment(new Date()).format("MMM YYYY");
+  let currentSeats = pms[0].majority[0].seats;
   let currentMajority = pms[0].majority[0].majority;
   let currentAct = "";
+  let currentActName = "";
 
   const setTextSize = () => {
     setTimeout(() => {
@@ -80,8 +82,12 @@
         if (observer_month) currentDate = observer_month;
         const observer_maj = entry.target.getAttribute("maj");
         if (observer_maj) currentMajority = observer_maj;
+        const observer_seats = entry.target.getAttribute("seats");
+        if (observer_seats) currentSeats = observer_seats;
         const observer_pm = entry.target.getAttribute("pm");
         if (observer_pm) currentPM = Math.max(0, +observer_pm);
+        const observer_actname = entry.target.getAttribute("actName");
+        if (observer_actname) currentActName = observer_actname;
         const observer_act = entry.target.getAttribute("act");
         if (observer_act && observer_act !== currentAct) {
           console.log("set", observer_act, currentAct);
@@ -92,12 +98,15 @@
           }, 50);
         }
         const observer_resetAct = entry.target.getAttribute("resetAct");
-        if (observer_resetAct && observer_pm !== currentPM) currentAct = false;
+        if (observer_resetAct && observer_pm !== currentPM) {
+          currentAct = false;
+          currentActName = false;
+        }
         // console.log({ observer_resetAct, ir: entry.intersectionRatio });
         // if (observer_resetAct) currentAct = false;
       });
     },
-    { rootMargin: "0px 0px -66%", threshold: 0 }
+    { rootMargin: "0px 0px -64.5%", threshold: 0 }
   );
 
   onMount(() =>
@@ -175,11 +184,18 @@
     const diff = monthDiff(new Date(start), new Date(end));
     return { i, i_m, end, start, diff: Math.max(0, diff) };
   };
+
+  const calculateMajorityWidth = ({ majority, seats }) => {
+    console.log({ majority, seats });
+    return ((seats / 2 + majority) / seats) * 100;
+  };
 </script>
 
 <style>
   main,
-  .overlay {
+  .overlay,
+  .current-act-name {
+    width: 100%;
     max-width: 700px;
   }
   main {
@@ -209,10 +225,9 @@
   p .citation {
     font-size: 1rem;
     opacity: 0.66;
-    text-align: right;
     display: block;
     font-weight: 200;
-    margin-top: 6px;
+    margin-top: 2rem;
   }
   header p strong {
     border-bottom: 2px solid #333;
@@ -452,7 +467,8 @@
   .majority-container {
     margin: 0 auto;
   }
-  .month {
+  .month,
+  .current-act-name div {
     padding: 6px;
     background: #f6f6f6;
     margin-bottom: 4px;
@@ -461,7 +477,8 @@
     font-size: 0.7rem;
     color: #aaa;
   }
-  .month.act {
+  .month.act,
+  .current-act-name div {
     color: #fff;
     padding: 7px 0;
   }
@@ -497,6 +514,19 @@
   }
   .current-act .inner {
     padding: 0.5rem 1rem;
+  }
+
+  .current-act-name {
+    position: fixed;
+    top: calc(33vh);
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    padding-top: 1vh;
+  }
+
+  .current-act-name div {
+    margin: 0 auto;
   }
 
   @media only screen and (max-width: 600px) {
@@ -544,6 +574,19 @@
           </div>
         </div>
       </header>
+      {#if currentAct}
+        <div class="current-act-name">
+          <div
+            style={`background: ${parties[pms[currentPM].party]}; width: ${calculateMajorityWidth(
+              {
+                majority: +currentMajority,
+                seats: +currentSeats
+              }
+            )}%`}>
+            {currentActName}
+          </div>
+        </div>
+      {/if}
       <div
         class="overlay"
         style={`bottom: ${pmsBottom}px; background: ${y > height ? '#fff' : 'none'}`}>
@@ -622,7 +665,7 @@
               <div>
                 <div
                   class="majority-container"
-                  style={`width: ${((majority.seats / 2 + majority.majority) / majority.seats) * 100}%`}>
+                  style={`width: ${calculateMajorityWidth(majority)}%`}>
                   <div>
                     {#each Array(getMajorityDateRange(i, i_m).diff) as _, i_m_m}
                       {#if acts[`${moment(getMajorityDateRange(i, i_m).end)
@@ -633,9 +676,11 @@
                             .format('YYYY-MM')}`] || [] as month_act, i_m_m_a}
                           <div
                             class="scroll month act"
-                            style={`background: ${parties[pms[i].party]}`}
+                            style={`background: ${parties[pms[i].party]}; opacity: ${month_act.Simple === currentAct ? 0 : 1}`}
                             maj={majority.majority}
                             act={month_act.Simple}
+                            actName={month_act.Act}
+                            seats={majority.seats}
                             pm={i}
                             month={moment(getMajorityDateRange(i, i_m).end)
                               .subtract(i_m_m, 'months')
@@ -646,7 +691,6 @@
                       {:else}
                         <div
                           class="scroll month"
-                          maj={majority.majority}
                           pm={i}
                           month={moment(getMajorityDateRange(i, i_m).end)
                             .subtract(i_m_m, 'months')
