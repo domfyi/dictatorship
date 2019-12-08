@@ -104,7 +104,7 @@
       // if (observer_resetAct) currentAct = false;
       // });
     },
-    { rootMargin: "-35% 0 -63% 0", threshold: 0 }
+    { rootMargin: "-36% 0 -63% 0", threshold: 0 }
   );
 
   onMount(() =>
@@ -194,6 +194,13 @@
   const calculateMajorityWidth = ({ majority, seats }) => {
     return ((seats / 2 + majority) / seats) * 100;
   };
+
+  const getActsFromMonth = ({ i, i_m, i_m_m }) =>
+    acts[
+      `${moment(getMajorityDateRange(i, i_m).end)
+        .subtract(i_m_m, "months")
+        .format("YYYY-MM")}`
+    ] || [];
 </script>
 
 <style>
@@ -607,7 +614,7 @@
               <span class="majority-header-date">
                 {currentDate.split(' ')[0]}
               </span>
-              <span>{currentDate.split(' ')[1]}</span>
+              <span>{currentDate.split(' ')[1].slice(2)}</span>
             </div>
           </div>
           <div class="pms">
@@ -670,9 +677,11 @@
                       {#if acts[`${moment(getMajorityDateRange(i, i_m).end)
                           .subtract(i_m_m, 'months')
                           .format('YYYY-MM')}`]}
-                        {#each acts[`${moment(getMajorityDateRange(i, i_m).end)
-                            .subtract(i_m_m, 'months')
-                            .format('YYYY-MM')}`] || [] as month_act, i_m_m_a}
+                        {#each getActsFromMonth({
+                          i,
+                          i_m,
+                          i_m_m
+                        }) as month_act, i_m_m_a}
                           <div
                             class="scroll month act"
                             style={`background: ${parties[pms[i].party]}; opacity: ${month_act.Simple === currentAct ? 0 : 1}`}
@@ -690,6 +699,14 @@
                               {month_act.Act}
                             </span>
                           </div>
+                          {#if getActsFromMonth({ i, i_m, i_m_m }).length}
+                            <div
+                              class="scroll month"
+                              pm={i}
+                              month={moment(getMajorityDateRange(i, i_m).end)
+                                .subtract(i_m_m, 'months')
+                                .format('MMM YYYY')} />
+                          {/if}
                         {/each}
                       {:else}
                         <div
