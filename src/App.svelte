@@ -373,6 +373,9 @@
     margin-bottom: -22px !important;
     filter: brightness(75%);
   }
+  .act-name {
+    transition: 0.5s all;
+  }
   .scroll-down {
     color: white;
     z-index: 4;
@@ -685,7 +688,11 @@
                             month={moment(getMajorityDateRange(i, i_m).end)
                               .subtract(i_m_m, 'months')
                               .format('MMM YYYY')}>
-                            {month_act.Act}
+                            <span
+                              class="act-name"
+                              style={`opacity: ${i === currentPM ? 1 : 0.2}`}>
+                              {month_act.Act}
+                            </span>
                           </div>
                         {/each}
                       {:else}
