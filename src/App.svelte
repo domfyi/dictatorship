@@ -74,39 +74,41 @@
 
   let observer = new IntersectionObserver(
     (entries, observer) => {
-      entries.forEach(entry => {
-        if (!entry.isIntersecting) return;
-        // if (entry.intersectionRatio === 1) return;
-        console.log(entry.intersectionRatio);
-        const observer_month = entry.target.getAttribute("month");
-        if (observer_month) currentDate = observer_month;
-        const observer_maj = entry.target.getAttribute("maj");
-        if (observer_maj) currentMajority = observer_maj;
-        const observer_seats = entry.target.getAttribute("seats");
-        if (observer_seats) currentSeats = observer_seats;
-        const observer_pm = entry.target.getAttribute("pm");
-        if (observer_pm) currentPM = Math.max(0, +observer_pm);
-        const observer_actname = entry.target.getAttribute("actName");
-        if (observer_actname) currentActName = observer_actname;
-        const observer_act = entry.target.getAttribute("act");
-        if (observer_act && observer_act !== currentAct) {
-          console.log("set", observer_act, currentAct);
-          currentAct = "";
-          setTimeout(() => {
-            currentAct = observer_act;
-            setTextSize();
-          }, 50);
-        }
-        const observer_resetAct = entry.target.getAttribute("resetAct");
-        if (observer_resetAct && observer_pm !== currentPM) {
-          currentAct = false;
-          currentActName = false;
-        }
-        // console.log({ observer_resetAct, ir: entry.intersectionRatio });
-        // if (observer_resetAct) currentAct = false;
-      });
+      const entry = entries.filter(e => e.isIntersecting)[0];
+      if (!entry) return;
+      // entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      // if (entry.intersectionRatio === 1) return;
+      console.log(entry.intersectionRatio);
+      const observer_month = entry.target.getAttribute("month");
+      if (observer_month) currentDate = observer_month;
+      const observer_maj = entry.target.getAttribute("maj");
+      if (observer_maj) currentMajority = observer_maj;
+      const observer_seats = entry.target.getAttribute("seats");
+      if (observer_seats) currentSeats = observer_seats;
+      const observer_pm = entry.target.getAttribute("pm");
+      if (observer_pm) currentPM = Math.max(0, +observer_pm);
+      const observer_actname = entry.target.getAttribute("actName");
+      if (observer_actname) currentActName = observer_actname;
+      const observer_act = entry.target.getAttribute("act");
+      if (observer_act && observer_act !== currentAct) {
+        console.log("set", observer_act, currentAct);
+        currentAct = "";
+        setTimeout(() => {
+          currentAct = observer_act;
+          setTextSize();
+        }, 50);
+      }
+      const observer_resetAct = entry.target.getAttribute("resetAct");
+      if (observer_resetAct && observer_pm !== currentPM) {
+        currentAct = false;
+        currentActName = false;
+      }
+      // console.log({ observer_resetAct, ir: entry.intersectionRatio });
+      // if (observer_resetAct) currentAct = false;
+      // });
     },
-    { rootMargin: "0px 0px -64.5%", threshold: 0 }
+    { rootMargin: "-35% 0 -63% 0", threshold: 0 }
   );
 
   onMount(() =>
@@ -186,7 +188,6 @@
   };
 
   const calculateMajorityWidth = ({ majority, seats }) => {
-    console.log({ majority, seats });
     return ((seats / 2 + majority) / seats) * 100;
   };
 </script>
@@ -525,7 +526,7 @@
     left: 50%;
     transform: translateX(-50%);
     background: white;
-    padding-top: 1vh;
+    padding-top: 9px;
   }
 
   .current-act-name div {
