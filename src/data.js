@@ -17,7 +17,6 @@ export const getActs = async () => {
     separator: "\t"
   });
   const actMap = arrayofObjects.reduce((list, act) => {
-    console.log(act);
     if (!act.Date) return list;
     const key = act.Date.slice(0, 7);
     if (act["Visible\r"] !== "TRUE\r") return list;
@@ -437,5 +436,3 @@ export let majorities = [
 ];
 
 export let majorities_flat = majorities.flat();
-
-// console.log({ majorities });

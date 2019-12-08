@@ -25,14 +25,6 @@
     }, 0);
   };
 
-  //   textFit(document.getElementsByClassName("current-act"), {
-  //     multiLine: true,
-  //     alignVert: false,
-  //     alignHoriz: false,
-  //     alignVertWithFlexbox: false,
-  //     reProcess: true
-  //   });
-
   let acts = false;
 
   $: pm1 = pms[currentPM || 0];
@@ -100,9 +92,6 @@
         currentAct = false;
         currentActName = false;
       }
-      // console.log({ observer_resetAct, ir: entry.intersectionRatio });
-      // if (observer_resetAct) currentAct = false;
-      // });
     },
     { rootMargin: "-36% 0 -63% 0", threshold: 0 }
   );
