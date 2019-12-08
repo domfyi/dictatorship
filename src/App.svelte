@@ -52,14 +52,6 @@
     ave_majority + half_star_second_half,
     ave_majority + half_star_second_half * 3
   ];
-  console.log({
-    ave_majority,
-    max_majority,
-    star_boundries,
-    unique_majorities,
-    sum: unique_majorities.reduce((sum, x) => sum + x),
-    len: unique_majorities.length
-  });
 
   $: animations = {
     cover: {
@@ -196,6 +188,7 @@
     return start ? start.date : false;
   };
   const getMajorityDateRange = (i, i_m) => {
+    // console.log({ i, i_m, maj: majorities[i][i_m] });
     if (!majorities[i][i_m]) return { diff: 0 };
     const start = new Date(majorities[i][i_m].date);
     const end =

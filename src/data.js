@@ -19,31 +19,13 @@ export const getActs = async () => {
   const actMap = arrayofObjects.reduce((list, act) => {
     if (!act.Date) return list;
     const key = act.Date.slice(0, 7);
-    if (act["Visible\r"] !== "TRUE\r") return list;
+    if (act["Visible"] !== "TRUE") return list;
     if (!list[key]) list[key] = [];
     list[key].push(act);
     return list;
   }, {});
   return actMap;
 };
-
-getActs();
-
-// inject acts into pms
-export const acts = [
-  {
-    date: "1969-04-17",
-    act: "Representation of the People Act",
-    link: "https://en.wikipedia.org/wiki/Representation_of_the_People_Act_1969",
-    simple: "18 year olds can vote"
-  },
-  {
-    date: "2015-12-17",
-    act: "European Union Referendum Act 2015",
-    link: "https://en.wikipedia.org/wiki/European_Union_Referendum_Act_2015",
-    simple: "Brexit referendum"
-  }
-];
 
 export const pms = [
   {
@@ -191,7 +173,6 @@ export const pms = [
     party: "LAB",
     image: "Wilson.png",
     majority: [
-      ,
       {
         date: "1974-10-10",
         majority: 3,
@@ -237,7 +218,7 @@ export const pms = [
   },
   {
     name: "Alec Douglas-Home",
-    nickname: "Doug-Home",
+    nickname: "Home",
     party: "CON",
     image: "Home.png",
     majority: [
