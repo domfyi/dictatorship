@@ -464,6 +464,7 @@
     align-items: center;
     justify-content: center;
     background: #444;
+    color: #676767;
   }
   .victorian-title {
     font-size: 3rem;
@@ -545,13 +546,31 @@
   .majority-title {
     margin-top: 2.5rem;
     margin-bottom: 0.5rem;
-    font-size: 0.8rem;
+    font-size: 0.7rem;
     text-transform: uppercase;
     color: #c6c6c6;
   }
 
   .fa-star {
     margin: 2px 0;
+  }
+  .created-by {
+    font-size: 4rem;
+    margin: 1rem 0;
+  }
+  .author {
+    padding: 1rem;
+    display: inline-block;
+    text-decoration: none;
+  }
+  .author div {
+    color: #757575;
+  }
+  .author .domfyi {
+    margin-top: 3px;
+    font-size: 1.2rem;
+    color: #fff;
+    margin-right: -4px;
   }
 
   @media only screen and (max-width: 600px) {
@@ -754,7 +773,11 @@
           </div>
         {/each}
         <div class="victorians">
-          <div class="victorian-inner">created by</div>
+          <a class="author" target="_blank" href="https://dom.fyi">
+            <div class="created-by">🚀</div>
+            <div>created by</div>
+            <div class="domfyi">dom.fyi ›</div>
+          </a>
         </div>
       </section>
     </div>
