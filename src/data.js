@@ -17,6 +17,8 @@ export const getActs = async () => {
     separator: "\t"
   });
   const actMap = arrayofObjects.reduce((list, act) => {
+    console.log(act);
+    if (!act.Date) return list;
     const key = act.Date.slice(0, 7);
     if (act["Visible\r"] !== "TRUE\r") return list;
     if (!list[key]) list[key] = [];
@@ -291,9 +293,9 @@ export const pms = [
         seats: 630
       },
       {
-        date: "1955-05-26",
-        majority: 60,
-        seats: 630
+        date: "1955-04-06",
+        majority: 17,
+        seats: 625
       }
     ]
   },
@@ -303,112 +305,129 @@ export const pms = [
     nickname: "Churchill",
     party: "CON",
     image: "Churchill.png",
-    majority: []
+    majority: [
+      {
+        date: "1951-10-26",
+        majority: 17,
+        seats: 625
+      }
+    ]
   },
   {
-    date: "1945-07-26",
+    date: "1945-07-05",
     name: "Clement Attlee",
     nickname: "Atlee",
     party: "LAB",
     image: "Atlee.png",
-    majority: []
-  },
-  {
-    date: "1940-05-10",
-    name: "Winston Churchill",
-    nickname: "Churchill",
-    party: "CON",
-    image: "Churchill.png",
-    majority: []
-  },
-  {
-    date: "1937-05-28",
-    name: "Neville Chamberlain",
-    nickname: "Chamberlain",
-    party: "CON",
-    image: "Chaimberlain.png",
-    majority: []
-  },
-  {
-    date: "1935-06-07",
-    name: "Stanley Baldwin",
-    nickname: "Baldwin",
-    party: "CON",
-    image: "Baldwin.png",
-    majority: []
-  },
-  {
-    date: "1929-06-05",
-    name: "Ramsay MacDonald",
-    nickname: "MacDonald",
-    party: "LAB",
-    image: "MacDonald.png",
-    majority: []
-  },
-  {
-    date: "1924-11-04",
-    name: "Stanley Baldwin",
-    nickname: "Baldwin",
-    party: "CON",
-    image: "Baldwin.png",
-    majority: []
-  },
-  {
-    date: "1924-01-22",
-    name: "Ramsay MacDonald",
-    nickname: "MacDonald",
-    party: "LAB",
-    image: "MacDonald.png",
-    majority: []
-  },
-  {
-    date: "1923-05-22",
-    name: "Stanley Baldwin",
-    nickname: "Baldwin",
-    party: "CON",
-    image: "Baldwin.png",
-    majority: []
-  },
-  {
-    date: "1922-10-23",
-    name: "Bonar Law",
-    nickname: "Bonar Law",
-    party: "CON",
-    image: "Bonar-Law.png",
-    majority: []
-  },
-  {
-    date: "1916-12-06",
-    name: "David Lloyd George",
-    nickname: "Lloyd G",
-    party: "LIB",
-    image: "Lloyd-George.png",
-    majority: []
-  },
-  {
-    date: "1908-04-08",
-    name: "H. H. Asquith",
-    nickname: "Asquith",
-    party: "LIB",
-    image: "Asquith.png",
-    majority: []
-  },
-  {
-    date: "1905-12-05",
-    name: "Henry Campbell-Bannerman",
-    nickname: "Bannerman",
-    party: "LIB",
-    image: "Campbell-Bannerman.png",
-    majority: []
-  },
-  {
-    date: "1902-07-12",
-    name: "Arthur Balfour",
-    nickname: "Balfour",
-    party: "CON",
-    image: "Balfour.png",
-    majority: []
+    majority: [
+      {
+        date: "1950-02-23",
+        majority: 5,
+        seats: 625
+      },
+      {
+        date: "1945-07-05",
+        majority: 146,
+        seats: 640
+      }
+    ]
   }
+  // {
+  //   date: "1940-05-10",
+  //   name: "Winston Churchill",
+  //   nickname: "Churchill",
+  //   party: "CON",
+  //   image: "Churchill.png",
+  //   majority: []
+  // },
+  // {
+  //   date: "1937-05-28",
+  //   name: "Neville Chamberlain",
+  //   nickname: "Chamberlain",
+  //   party: "CON",
+  //   image: "Chaimberlain.png",
+  //   majority: []
+  // },
+  // {
+  //   date: "1935-06-07",
+  //   name: "Stanley Baldwin",
+  //   nickname: "Baldwin",
+  //   party: "CON",
+  //   image: "Baldwin.png",
+  //   majority: []
+  // },
+  // {
+  //   date: "1929-06-05",
+  //   name: "Ramsay MacDonald",
+  //   nickname: "MacDonald",
+  //   party: "LAB",
+  //   image: "MacDonald.png",
+  //   majority: []
+  // },
+  // {
+  //   date: "1924-11-04",
+  //   name: "Stanley Baldwin",
+  //   nickname: "Baldwin",
+  //   party: "CON",
+  //   image: "Baldwin.png",
+  //   majority: []
+  // },
+  // {
+  //   date: "1924-01-22",
+  //   name: "Ramsay MacDonald",
+  //   nickname: "MacDonald",
+  //   party: "LAB",
+  //   image: "MacDonald.png",
+  //   majority: []
+  // },
+  // {
+  //   date: "1923-05-22",
+  //   name: "Stanley Baldwin",
+  //   nickname: "Baldwin",
+  //   party: "CON",
+  //   image: "Baldwin.png",
+  //   majority: []
+  // },
+  // {
+  //   date: "1922-10-23",
+  //   name: "Bonar Law",
+  //   nickname: "Bonar Law",
+  //   party: "CON",
+  //   image: "Bonar-Law.png",
+  //   majority: []
+  // },
+  // {
+  //   date: "1916-12-06",
+  //   name: "David Lloyd George",
+  //   nickname: "Lloyd G",
+  //   party: "LIB",
+  //   image: "Lloyd-George.png",
+  //   majority: []
+  // },
+  // {
+  //   date: "1908-04-08",
+  //   name: "H. H. Asquith",
+  //   nickname: "Asquith",
+  //   party: "LIB",
+  //   image: "Asquith.png",
+  //   majority: []
+  // },
+  // {
+  //   date: "1905-12-05",
+  //   name: "Henry Campbell-Bannerman",
+  //   nickname: "Bannerman",
+  //   party: "LIB",
+  //   image: "Campbell-Bannerman.png",
+  //   majority: []
+  // },
+  // {
+  //   date: "1902-07-12",
+  //   name: "Arthur Balfour",
+  //   nickname: "Balfour",
+  //   party: "CON",
+  //   image: "Balfour.png",
+  //   majority: []
+  // }
 ];
 
 export let majorities = [

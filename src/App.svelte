@@ -76,10 +76,7 @@
     (entries, observer) => {
       const entry = entries.filter(e => e.isIntersecting)[0];
       if (!entry) return;
-      // entries.forEach(entry => {
       if (!entry.isIntersecting) return;
-      // if (entry.intersectionRatio === 1) return;
-      console.log(entry.intersectionRatio);
       const observer_month = entry.target.getAttribute("month");
       if (observer_month) currentDate = observer_month;
       const observer_maj = entry.target.getAttribute("maj");
@@ -92,7 +89,6 @@
       if (observer_actname) currentActName = observer_actname;
       const observer_act = entry.target.getAttribute("act");
       if (observer_act && observer_act !== currentAct) {
-        console.log("set", observer_act, currentAct);
         currentAct = "";
         setTimeout(() => {
           currentAct = observer_act;
@@ -115,7 +111,11 @@
     window.addEventListener("scroll", e => {
       if (y < animations.pms.stop) {
         currentPM = 0;
-        currentAct = false;
+        currentAct = "";
+        currentActName = "";
+        currentSeats = pms[0].majority[0].seats;
+        currentMajority = pms[0].majority[0].majority;
+        currentDate = moment(new Date()).format("MMM YYYY");
       }
     })
   );
