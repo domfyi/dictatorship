@@ -686,6 +686,10 @@
     margin-top: 4rem;
     color: #757575;
   }
+  .sub-p {
+    max-width: 500px;
+    margin: 0 auto !important;
+  }
 
   @media only screen and (max-width: 600px) {
     .majority-text {
@@ -739,10 +743,9 @@
                 <div>Elective</div>
                 <div>Dictatorship</div>
               </h1>
-              <p>
+              <p class="sub-p">
                 Because a government elected with a big enough majority can
                 <strong>essentially do what it wants</strong>
-                .
               </p>
             </div>
           </div>
