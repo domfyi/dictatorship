@@ -604,10 +604,10 @@
   }
   .author .domfyi {
     margin-top: 3px;
-    font-size: 1.25rem;
+    font-size: 1.5rem;
     color: #fff;
-    margin-right: -8px;
-    font-weight: 900;
+    margin-right: -13px;
+    font-weight: 200;
   }
 
   .act45-title {
