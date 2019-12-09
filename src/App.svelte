@@ -59,18 +59,18 @@
       startFade: (height / 4) * 0
     },
     pm2: {
-      up: 10,
-      down: 60
+      up: 310,
+      down: 360
     },
     pm3: {
-      up: 30,
-      down: 80
+      up: 330,
+      down: 380
     },
     pms: {
-      up1: 100,
-      pause: 550,
-      up2: 950,
-      stop: 1100
+      up1: 500,
+      pause: 950,
+      up2: 1350,
+      stop: 1500
     }
   };
 
@@ -442,6 +442,7 @@
   .mini-pm-container {
     margin-top: 20px;
     margin-bottom: 16px;
+    transition: 0.2s all;
   }
   .mini-pm {
     height: 100px;
@@ -606,6 +607,7 @@
         <div
           class="cover"
           style={`
+          opacity: ${1 - y / 200};
 		background-image: linear-gradient(
 			rgba(179,179,179,1), 
 			rgba(179,179,179,${y < animations.cover.startFade ? 1 : 1 - (y - animations.cover.startFade) / 1000}),
