@@ -114,7 +114,7 @@
         currentActLink = false;
       }
     },
-    { rootMargin: "-36% 0 -63% 0", threshold: 0 }
+    { rootMargin: "-36% 0px -63% 0px", threshold: 0 }
   );
 
   onMount(() =>
