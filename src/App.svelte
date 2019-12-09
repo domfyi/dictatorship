@@ -255,12 +255,20 @@
     );
   };
 
-  $: majorityText = majority =>
-    `${
+  $: majorityText = majority => {
+    const stars = star_boundries.filter(b => majority > b).length;
+    return `${
       majority <= 0
-        ? "no "
-        : `${star_boundries.filter(b => majority > b).length}-star`
+        ? "no"
+        : stars === 1
+        ? "small"
+        : stars === 4
+        ? "big"
+        : stars === 5
+        ? "huge"
+        : ""
     } majority`;
+  };
 </script>
 
 <style>
@@ -731,7 +739,6 @@
                 Because a government elected with a big enough majority can
                 <strong>essentially do what it wants</strong>
                 .
-                <span class="citation">— Lord Hailsham</span>
               </p>
             </div>
           </div>
