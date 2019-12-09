@@ -647,11 +647,14 @@
   .author div {
     color: #757575;
   }
+  .author .createdbyprefix {
+    font-size: 1.2rem;
+  }
   .author .domfyi {
     margin-top: 3px;
     font-size: 1.5rem;
     color: #fff;
-    margin-right: -13px;
+    margin-right: -12px;
     font-weight: 200;
   }
 
@@ -706,6 +709,7 @@
     }
     .pm1.left {
       transform: scale(0.8);
+      height: 90%;
       transform-origin: bottom;
     }
   }
@@ -943,7 +947,7 @@
           <div class="victorians">
             <a class="author" target="_blank" href="https://dom.fyi">
               <div class="created-by">🚀</div>
-              <div>created by</div>
+              <div class="createdbyprefix">created by</div>
               <div class="domfyi">dom.fyi ›</div>
             </a>
             <a
