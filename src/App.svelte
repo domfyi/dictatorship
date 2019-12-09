@@ -751,7 +751,13 @@
                 {(currentActDate || currentDate).split(' ')[0]}
               </span>
               <span>
-                {(currentActDate || currentDate).split(' ')[1].slice(2)}
+                {(currentActDate || currentDate)
+                  .split(' ')[1]
+                  .slice(
+                    2
+                  ) === '00' ? '2000' : (currentActDate || currentDate)
+                      .split(' ')[1]
+                      .slice(2)}
               </span>
             </div>
           </div>
@@ -793,7 +799,9 @@
         <div
           class="majority-title first-majority"
           style={`transform: scale(${firstMajorityScale}); padding-top: calc(3rem + ${y < animations.pms.up2 ? 0 : Math.min(y - animations.pms.up2, 200)}px)`}>
-          <div>{pms[0].majority[0].majority < 0 ? 'no ' : ''} majority</div>
+          <div class="scroll">
+            {pms[0].majority[0].majority < 0 ? 'no ' : ''} majority
+          </div>
           <div>
             {#each new Array(5) as _, i_star}
               <i
@@ -826,7 +834,7 @@
               {#each pm.majority.filter(Boolean) as majority, i_m}
                 <div>
                   {#if i !== 0}
-                    <div class="majority-title">
+                    <div class="majority-title scroll" resetAct={true}>
                       <div>{majority.majority < 0 ? 'no ' : ''} majority</div>
 
                       <div>
