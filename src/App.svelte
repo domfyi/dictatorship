@@ -794,7 +794,7 @@
         style={`margin-top: ${-pmsBottom + (y < animations.pms.stop ? y : animations.pms.stop)}px;`}>
         <div
           class="majority-title first-majority"
-          style={`transform: scale(${firstMajorityScale})`}>
+          style={`transform: scale(${firstMajorityScale}); padding-top: calc(3rem + ${y < animations.pms.up2 ? 0 : Math.min(y - animations.pms.up2, 200)}px)`}>
           <div>{pms[0].majority[0].majority < 0 ? 'no ' : ''} majority</div>
           <div>
             {#each new Array(5) as _, i_star}
