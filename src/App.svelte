@@ -236,7 +236,7 @@
     y < animations.pms.pause
       ? 0
       : y < animations.pms.up2
-      ? Math.max(0, Math.min((y - animations.pms.pause) / 50, 3))
+      ? Math.max(0, Math.min((y - 220 - animations.pms.pause) / 50, 3))
       : Math.max(1, 3 - (y - animations.pms.up2) / 50);
 
   const isActClose = month => {
@@ -743,7 +743,7 @@
         class="act45-title"
         style={`bottom: calc(22vh + ${pmsBottom}px); opacity: ${actTitleOpacity}`}>
         <h2>acts</h2>
-        <div>— since 1945 —</div>
+        <div style={`opacity: ${actTitleOpacity / 3}`}>— since 1945 —</div>
       </div>
       <div
         class="overlay"
@@ -814,7 +814,7 @@
         style={`margin-top: ${-pmsBottom + (y < animations.pms.stop ? y : animations.pms.stop)}px;`}>
         <div
           class="majority-title first-majority"
-          style={`transform: scale(${firstMajorityScale}); padding-top: calc(3rem + ${y < animations.pms.up2 ? 0 : Math.min(y - animations.pms.up2, 200)}px)`}>
+          style={`transform: scale(${firstMajorityScale}); opacity: ${firstMajorityScale}; padding-top: calc(3rem + ${y < animations.pms.up2 ? 0 : Math.min(y - animations.pms.up2, 200)}px)`}>
           <div class="scroll">
             {pms[0].majority[0].majority < 0 ? 'no ' : ''} majority
           </div>
