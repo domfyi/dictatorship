@@ -154,7 +154,7 @@
   });
 
   $: victorianPoint =
-    y && document.documentElement.scrollHeight - height - height / 3;
+    y && document.documentElement.scrollHeight - height - height / 2;
 
   const setpmsBottom = () => {
     const { up1, pause, up2, stop } = animations.pms;
@@ -536,7 +536,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #444;
+    background: #222;
     color: #676767;
     font-weight: 200;
     letter-spacing: 2px;
