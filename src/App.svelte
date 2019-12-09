@@ -422,7 +422,7 @@
     margin-bottom: -10px;
   }
   .pm3 {
-    margin-left: -25%;
+    margin-left: -33%;
     z-index: 1;
     height: 80%;
     animation-duration: 0.8s;
@@ -439,7 +439,7 @@
     margin-left: -33%;
   }
   .pm2 {
-    margin-left: 25%;
+    margin-left: 33%;
     z-index: 2;
     height: 90%;
     animation-duration: 0.8s;
@@ -524,6 +524,7 @@
     color: #676767;
     font-weight: 200;
     letter-spacing: 2px;
+    flex-direction: column;
   }
   .victorian-title {
     font-size: 3rem;
@@ -661,6 +662,10 @@
     letter-spacing: 2px;
     font-size: 1.3rem;
     color: #a9a9a9;
+  }
+  .viewcode {
+    margin-top: 4rem;
+    color: #fff;
   }
 
   @media only screen and (max-width: 600px) {
@@ -927,6 +932,12 @@
               <div class="created-by">🚀</div>
               <div>created by</div>
               <div class="domfyi">dom.fyi ›</div>
+            </a>
+            <a
+              class="viewcode"
+              target="_blank"
+              href="https://github.com/domfyi/dictatorship">
+              ‹ view code ›
             </a>
           </div>
         </div>
