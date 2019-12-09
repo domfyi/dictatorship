@@ -100,9 +100,10 @@
       const observer_pm = entry.target.getAttribute("pm");
       if (observer_pm) currentPM = Math.max(0, +observer_pm);
       const observer_actname = entry.target.getAttribute("actName");
-      if (observer_actname) currentActName = observer_actname;
+      if (observer_actname && observer_actname !== "false")
+        currentActName = observer_actname;
       const observer_actlink = entry.target.getAttribute("actLink");
-      if (observer_actname) currentActLink = observer_actlink;
+      if (observer_actlink) currentActLink = observer_actlink;
       const observer_actdate = entry.target.getAttribute("actDate");
       if (observer_actdate) currentActDate = observer_actdate;
       const observer_act = entry.target.getAttribute("act");
@@ -111,7 +112,7 @@
         setTimeout(() => {
           currentAct = observer_act;
           setTextSize();
-        }, 50);
+        }, 10);
       }
       const observer_resetAct = entry.target.getAttribute("resetAct");
       if (
@@ -665,7 +666,7 @@
   }
   .viewcode {
     margin-top: 4rem;
-    color: #fff;
+    color: #757575;
   }
 
   @media only screen and (max-width: 600px) {
