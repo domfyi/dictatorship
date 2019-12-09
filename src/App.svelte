@@ -224,6 +224,13 @@
       : y > animations.cover.startFade + 200
       ? 0 + (y - (animations.cover.startFade + 200)) / 100
       : 0;
+
+  $: firstMajorityScale =
+    y < animations.pms.pause
+      ? 0
+      : y < animations.pms.up2
+      ? Math.max(0, Math.min((y - animations.pms.pause) / 50, 3))
+      : Math.max(1, 3 - (y - animations.pms.up2) / 50);
 </script>
 
 <style>
@@ -487,8 +494,8 @@
     justify-content: center;
     background: #444;
     color: #676767;
-    font-weight: 700;
-    letter-spacing: 1px;
+    font-weight: 200;
+    letter-spacing: 2px;
   }
   .victorian-title {
     font-size: 3rem;
@@ -524,7 +531,7 @@
     border-radius: 8px;
     position: absolute;
     top: 0.5rem;
-    right: 0.5rem;
+    right: 0;
     left: 33%;
     bottom: 18vh;
     background-color: var(--my-color-var);
@@ -573,6 +580,11 @@
     font-size: 0.7rem;
     text-transform: uppercase;
     color: #c6c6c6;
+  }
+
+  .majority-title.first-majority {
+    padding-top: 3rem;
+    margin-bottom: -1.75rem;
   }
 
   .fa-star {
@@ -645,9 +657,9 @@
           style={`
           opacity: ${1 - y / 200};
 		background-image: linear-gradient(
-			rgba(179,179,179,1), 
-			rgba(179,179,179,${y < animations.cover.startFade ? 1 : 1 - (y - animations.cover.startFade) / 1000}),
-			rgba(179,179,179,${y < animations.cover.startFade ? 1 : 1 - (y - animations.cover.startFade) / 100})
+			rgba(200,200,200,1), 
+			rgba(200,200,200,${y < animations.cover.startFade ? 1 : 1 - (y - animations.cover.startFade) / 1000}),
+			rgba(200,200,200,${y < animations.cover.startFade ? 1 : 1 - (y - animations.cover.startFade) / 100})
 		); 
 	  `}>
           <div class="cover-inner">
@@ -749,94 +761,112 @@
       <section
         class="history"
         style={`margin-top: ${-pmsBottom + (y < animations.pms.stop ? y : animations.pms.stop)}px;`}>
-        {#each pms as pm, i}
-          <div class="pm " {i}>
-            <div
-              class={`scroll mini-pm-container ${i === 0 && 'first-pm'}`}
-              style={`opacity: ${currentPM === i ? 0 : 1}`}
-              pm={i}
-              resetAct={true}>
-              <div class="pm-avatar animated">
-                <img
-                  alt="pm"
-                  class="animated mini-pm"
-                  {i}
-                  src={`/pms/${pm.image}`} />
-                <div
-                  class="pm-avatar-border"
-                  style={`background: ${parties[pms[i].party]}`} />
-              </div>
-            </div>
-            {#each pm.majority.filter(Boolean) as majority, i_m}
-              <div>
-                <div class="majority-title">
-                  <div>majority</div>
-
-                  <div>
-                    {#each new Array(5) as _, i_star}
-                      <i
-                        class="fas fa-star"
-                        style={`color: ${majority.majority > star_boundries[i_star] ? 'rgb(232, 209, 0)' : '#c6c6c6'};`} />
-                    {/each}
-                  </div>
-                </div>
-                <div
-                  class="majority-container"
-                  style={`width: ${calculateMajorityWidth(majority)}%`}>
-                  <div>
-                    {#each Array(getMajorityDateRange(i, i_m).diff) as _, i_m_m}
-                      {#if acts[`${moment(getMajorityDateRange(i, i_m).end)
-                          .subtract(i_m_m, 'months')
-                          .format('YYYY-MM')}`]}
-                        {#each getActsFromMonth({
-                          i,
-                          i_m,
-                          i_m_m
-                        }) as month_act, i_m_m_a}
-                          <a href={month_act.Link} target="_blank">
-                            <div
-                              class="scroll month act"
-                              style={`background: ${parties[pms[i].party]}; opacity: ${month_act.Simple === currentAct ? 0 : 1}`}
-                              maj={majority.majority}
-                              act={month_act.Simple}
-                              actName={month_act.Act}
-                              actLink={month_act.Link}
-                              seats={majority.seats}
-                              pm={i}
-                              month={moment(getMajorityDateRange(i, i_m).end)
-                                .subtract(i_m_m, 'months')
-                                .format('MMM YYYY')}>
-                              <span
-                                class="act-name"
-                                style={`opacity: ${i === currentPM ? 1 : 0.2}`}>
-                                {month_act.Act}
-                              </span>
-                            </div>
-                          </a>
-                          {#if getActsFromMonth({ i, i_m, i_m_m }).length}
-                            <div
-                              class="scroll month"
-                              pm={i}
-                              month={moment(getMajorityDateRange(i, i_m).end)
-                                .subtract(i_m_m, 'months')
-                                .format('MMM YYYY')} />
-                          {/if}
-                        {/each}
-                      {:else}
-                        <div
-                          class="scroll month"
-                          pm={i}
-                          month={moment(getMajorityDateRange(i, i_m).end)
-                            .subtract(i_m_m, 'months')
-                            .format('MMM YYYY')} />
-                      {/if}
-                    {/each}
-                  </div>
-                </div>
-              </div>
+        <div
+          class="majority-title first-majority"
+          style={`transform: scale(${firstMajorityScale})`}>
+          <div>{pms[0].majority[0].majority < 0 ? 'no ' : ''} majority</div>
+          <div>
+            {#each new Array(5) as _, i_star}
+              <i
+                class="fas fa-star"
+                style={`color: ${pms[0].majority[0].majority > star_boundries[i_star] ? 'rgb(232, 209, 0)' : '#c6c6c6'};`} />
             {/each}
           </div>
-        {/each}
+        </div>
+        <div
+          class="history-body"
+          style={`opacity: ${y < animations.pms.up2 + 100 ? 0 : (y - animations.pms.up2 - 100) / 100}`}>
+          {#each pms as pm, i}
+            <div class="pm " {i}>
+              <div
+                class={`scroll mini-pm-container ${i === 0 && 'first-pm'}`}
+                style={`opacity: ${currentPM === i ? 0 : 1}`}
+                pm={i}
+                resetAct={true}>
+                <div class="pm-avatar animated">
+                  <img
+                    alt="pm"
+                    class="animated mini-pm"
+                    {i}
+                    src={`/pms/${pm.image}`} />
+                  <div
+                    class="pm-avatar-border"
+                    style={`background: ${parties[pms[i].party]}`} />
+                </div>
+              </div>
+              {#each pm.majority.filter(Boolean) as majority, i_m}
+                <div>
+                  {#if i !== 0}
+                    <div class="majority-title">
+                      <div>{majority.majority < 0 ? 'no ' : ''} majority</div>
+
+                      <div>
+                        {#each new Array(5) as _, i_star}
+                          <i
+                            class="fas fa-star"
+                            style={`color: ${majority.majority > star_boundries[i_star] ? 'rgb(232, 209, 0)' : '#c6c6c6'};`} />
+                        {/each}
+                      </div>
+                    </div>
+                  {/if}
+                  <div
+                    class="majority-container"
+                    style={`width: ${calculateMajorityWidth(majority)}%`}>
+                    <div>
+                      {#each Array(getMajorityDateRange(i, i_m).diff) as _, i_m_m}
+                        {#if acts[`${moment(getMajorityDateRange(i, i_m).end)
+                            .subtract(i_m_m, 'months')
+                            .format('YYYY-MM')}`]}
+                          {#each getActsFromMonth({
+                            i,
+                            i_m,
+                            i_m_m
+                          }) as month_act, i_m_m_a}
+                            <a href={month_act.Link} target="_blank">
+                              <div
+                                class="scroll month act"
+                                style={`background: ${parties[pms[i].party]}; opacity: ${month_act.Simple === currentAct ? 0 : 1}`}
+                                maj={majority.majority}
+                                act={month_act.Simple}
+                                actName={month_act.Act}
+                                actLink={month_act.Link}
+                                seats={majority.seats}
+                                pm={i}
+                                month={moment(getMajorityDateRange(i, i_m).end)
+                                  .subtract(i_m_m, 'months')
+                                  .format('MMM YYYY')}>
+                                <span
+                                  class="act-name"
+                                  style={`opacity: ${i === currentPM ? 1 : 0.2}`}>
+                                  {month_act.Act}
+                                </span>
+                              </div>
+                            </a>
+                            {#if getActsFromMonth({ i, i_m, i_m_m }).length}
+                              <div
+                                class="scroll month"
+                                pm={i}
+                                month={moment(getMajorityDateRange(i, i_m).end)
+                                  .subtract(i_m_m, 'months')
+                                  .format('MMM YYYY')} />
+                            {/if}
+                          {/each}
+                        {:else}
+                          <div
+                            class="scroll month"
+                            pm={i}
+                            month={moment(getMajorityDateRange(i, i_m).end)
+                              .subtract(i_m_m, 'months')
+                              .format('MMM YYYY')} />
+                        {/if}
+                      {/each}
+                    </div>
+                  </div>
+                </div>
+              {/each}
+            </div>
+          {/each}
+        </div>
         <div class="victorians">
           <a class="author" target="_blank" href="https://dom.fyi">
             <div class="created-by">🚀</div>
