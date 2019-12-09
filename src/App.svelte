@@ -839,7 +839,9 @@
         <div
           class="majority-title first-majority"
           style={`transform: scale(${firstMajorityScale}); opacity: ${firstMajorityScale}; padding-top: calc(3rem + ${y < animations.pms.up2 ? 0 : Math.min(y - animations.pms.up2, 200)}px)`}>
-          <div class="scroll">{majorityText(pms[0].majority[0].majority)}</div>
+          <div class="scroll">
+            {pms[0].majority[0].coalition ? `with ${pms[0].majority[0].coalition}` : majorityText(pms[0].majority[0].majority)}
+          </div>
           <div>
             {#each new Array(5) as _, i_star}
               <i
@@ -873,7 +875,9 @@
                 <div>
                   {#if i !== 0}
                     <div class="majority-title scroll" resetAct={true}>
-                      <div>{majorityText(majority.majority)}</div>
+                      <div>
+                        {majority.coalition ? `with ${majority.coalition}` : majorityText(majority.majority)}
+                      </div>
 
                       <div>
                         {#each new Array(5) as _, i_star}
