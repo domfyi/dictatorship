@@ -374,7 +374,7 @@
     margin-bottom: -10px;
   }
   .pm3 {
-    margin-left: -25vh;
+    margin-left: -25%;
     z-index: 1;
     height: 80%;
     animation-duration: 0.8s;
@@ -391,7 +391,7 @@
     margin-left: -33%;
   }
   .pm2 {
-    margin-left: 25vh;
+    margin-left: 25%;
     z-index: 2;
     height: 90%;
     animation-duration: 0.8s;
