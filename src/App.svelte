@@ -15,6 +15,7 @@
   let currentAct = "";
   let currentActName = "";
   let currentActLink = "";
+  let currentActDate = "";
 
   const setTextSize = () => {
     setTimeout(() => {
@@ -102,6 +103,8 @@
       if (observer_actname) currentActName = observer_actname;
       const observer_actlink = entry.target.getAttribute("actLink");
       if (observer_actname) currentActLink = observer_actlink;
+      const observer_actdate = entry.target.getAttribute("actDate");
+      if (observer_actdate) currentActDate = observer_actdate;
       const observer_act = entry.target.getAttribute("act");
       if (observer_act && observer_act !== currentAct) {
         currentAct = "";
@@ -111,10 +114,15 @@
         }, 50);
       }
       const observer_resetAct = entry.target.getAttribute("resetAct");
-      if (observer_resetAct && observer_pm !== currentPM) {
+      if (
+        observer_resetAct &&
+        observer_resetAct !== "false" &&
+        observer_pm !== currentPM
+      ) {
         currentAct = false;
         currentActName = false;
         currentActLink = false;
+        currentActDate = false;
       }
     },
     { rootMargin: "-36% 0px -63% 0px", threshold: 0 }
@@ -127,6 +135,7 @@
         currentAct = false;
         currentActName = false;
         currentActLink = false;
+        currentActDate = false;
         currentSeats = pms[0].majority[0].seats;
         currentMajority = pms[0].majority[0].majority;
         currentDate = moment(new Date()).format("MMM YYYY");
@@ -197,7 +206,6 @@
     return start ? start.date : false;
   };
   const getMajorityDateRange = (i, i_m) => {
-    // console.log({ i, i_m, maj: majorities[i][i_m] });
     if (!majorities[i][i_m]) return { diff: 0 };
     const start = new Date(majorities[i][i_m].date);
     const end =
@@ -231,6 +239,23 @@
       : y < animations.pms.up2
       ? Math.max(0, Math.min((y - animations.pms.pause) / 50, 3))
       : Math.max(1, 3 - (y - animations.pms.up2) / 50);
+
+  const isActClose = month => {
+    const isClose =
+      [-4, -3, -2, -1, 1, 2, 3, 4, 5, 6, 7, 8]
+        .map(
+          m =>
+            acts[
+              moment(month)
+                .add(m, "months")
+                .format("YYYY-MM")
+            ]
+        )
+        .filter(Boolean).length > 0;
+
+    console.log({ date: month.format("YYYY-MM"), isClose });
+    return !isClose;
+  };
 </script>
 
 <style>
@@ -721,9 +746,11 @@
 		  `}>
             <div>
               <span class="majority-header-date">
-                {currentDate.split(' ')[0]}
+                {(currentActDate || currentDate).split(' ')[0]}
               </span>
-              <span>{currentDate.split(' ')[1].slice(2)}</span>
+              <span>
+                {(currentActDate || currentDate).split(' ')[1].slice(2)}
+              </span>
             </div>
           </div>
           <div class="pms">
@@ -830,6 +857,7 @@
                                 act={month_act.Simple}
                                 actName={month_act.Act}
                                 actLink={month_act.Link}
+                                actDate={moment(month_act.Date).format('MMM YYYY')}
                                 seats={majority.seats}
                                 pm={i}
                                 month={moment(getMajorityDateRange(i, i_m).end)
@@ -855,6 +883,7 @@
                           <div
                             class="scroll month"
                             pm={i}
+                            resetAct={isActClose(moment(getMajorityDateRange(i, i_m).end).subtract(i_m_m, 'months'))}
                             month={moment(getMajorityDateRange(i, i_m).end)
                               .subtract(i_m_m, 'months')
                               .format('MMM YYYY')} />
