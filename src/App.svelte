@@ -669,7 +669,7 @@
   }
 
   .act45-title h2 {
-    font-size: 4rem;
+    font-size: 5rem;
     font-weight: 200;
     margin: 0;
   }
