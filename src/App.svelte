@@ -58,13 +58,16 @@
     cover: {
       startFade: (height / 4) * 0
     },
+    pm1: {
+      left: 800
+    },
     pm2: {
-      up: 310,
-      down: 360
+      up: 710,
+      down: 760
     },
     pm3: {
-      up: 330,
-      down: 380
+      up: 730,
+      down: 780
     },
     pms: {
       up1: 500,
@@ -144,7 +147,7 @@
     const { up1, pause, up2, stop } = animations.pms;
     const pmHeight = height / 3;
     const startPoint = 0;
-    const midPoint = height - height / 2 - pmHeight / 2;
+    const midPoint = height - height / 2 - pmHeight / 4;
     const endPoint = height - pmHeight + 4;
     const victorianPoint =
       document.documentElement.scrollHeight - height - height / 3;
@@ -214,6 +217,13 @@
         .subtract(i_m_m, "months")
         .format("YYYY-MM")}`
     ] || [];
+
+  $: actTitleOpacity =
+    y > animations.pms.up1 + 100
+      ? 1 - (y - (animations.pms.up1 + 100)) / 100
+      : y > animations.cover.startFade + 200
+      ? 0 + (y - (animations.cover.startFade + 200)) / 100
+      : 0;
 </script>
 
 <style>
@@ -272,7 +282,8 @@
   .victorian-title,
   .majority-header,
   .current-act,
-  .victorians {
+  .victorians,
+  .act45-title {
     font-family: "Big Shoulders Display";
   }
   .victorian-title {
@@ -587,6 +598,31 @@
     font-weight: 900;
   }
 
+  .act45-title {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    flex-direction: column;
+    color: #fff;
+    z-index: 300;
+  }
+
+  .act45-title h2 {
+    font-size: 4rem;
+    font-weight: 200;
+    margin: 0;
+  }
+
+  .act45-title div {
+    letter-spacing: 2px;
+    font-size: 1.3rem;
+    color: #a9a9a9;
+  }
+
   @media only screen and (max-width: 600px) {
     .pm1.left {
       transform: scale(0.8);
@@ -649,6 +685,12 @@
         </div>
       {/if}
       <div
+        class="act45-title"
+        style={`bottom: calc(22vh + ${pmsBottom}px); opacity: ${actTitleOpacity}`}>
+        <h2>acts</h2>
+        <div>— since 1945 —</div>
+      </div>
+      <div
         class="overlay"
         style={`bottom: ${pmsBottom}px; background: ${y > height ? '#222' : 'none'}`}>
         <div class="ovelay-inner">
@@ -681,7 +723,7 @@
             {#if pms[currentPM]}
               <img
                 alt="pm1"
-                class={`pm1 ${y > (animations.pms.pause + animations.pm2.down) / 2 ? 'left' : ''}`}
+                class={`pm1 ${y > animations.pm1.left ? 'left' : ''}`}
                 src={`/pms/${pms[currentPM].image}`} />
             {/if}
             <img
