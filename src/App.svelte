@@ -1,6 +1,6 @@
 <script>
+  import { convertCSVToArray } from "convert-csv-to-array";
   import { onMount, afterUpdate } from "svelte";
-  import { pms, parties, majorities, getActs } from "./data.js";
   import moment from "moment";
   import textFit from "textfit";
 
@@ -8,14 +8,82 @@
   let height;
   let observerIsSet = false;
 
+  let govs = false;
+  let acts = false;
+
   let currentPM = 0;
   let currentDate = moment(new Date()).format("MMM YYYY");
-  let currentSeats = pms[0].majority[0].seats;
-  let currentMajority = pms[0].majority[0].majority;
+  $: currentSeats = govs && govs[0].majority[0].seats;
+  $: currentMajority = govs && govs[0].majority[0].majority;
   let currentAct = "";
   let currentActName = "";
   let currentActLink = "";
   let currentActDate = "";
+
+  const govs_url =
+    "https://docs.google.com/spreadsheets/d/e/2PACX-1vTmccYW6VEGjZRN926Bi8v-QTbzmLW9mcTM0UvMzmF8iH3zel_yHdTPand5eM_VpY6B5fgv18j-SBp8/pub?gid=1213725229&single=true&output=tsv";
+  const acts_url =
+    "https://docs.google.com/spreadsheets/d/e/2PACX-1vTmccYW6VEGjZRN926Bi8v-QTbzmLW9mcTM0UvMzmF8iH3zel_yHdTPand5eM_VpY6B5fgv18j-SBp8/pub?gid=0&single=true&output=tsv";
+
+  let majorities = [];
+
+  const getActs = async () => {
+    const data = await fetch(acts_url);
+    const tsv = await data.text();
+    const arrayofObjects = convertCSVToArray(tsv, {
+      header: false,
+      separator: "\t"
+    });
+    const actMap = arrayofObjects.reduce((list, act) => {
+      if (!act.Date || !act.Date.length) return list;
+      const key = act.Date.slice(0, 7);
+      if (act["Visible"] !== "TRUE") return list;
+      if (!list[key]) list[key] = [];
+      list[key].push(act);
+      return list;
+    }, {});
+    return actMap;
+  };
+
+  const getGovs = async () => {
+    const data = await fetch(govs_url);
+    const tsv = await data.text();
+    const arrayofObjects = convertCSVToArray(tsv, {
+      header: false,
+      separator: "\t"
+    });
+    const govMap = arrayofObjects.reduce(
+      (
+        list,
+        { name, nickname, party, image, date, majority, seats, coalition }
+      ) => {
+        if (!list[name]) {
+          list[name] = {
+            name,
+            nickname,
+            party,
+            image,
+            majority: []
+          };
+        }
+        list[name].majority.push({
+          date,
+          majority,
+          seats,
+          coalition
+        });
+        return list;
+      },
+      {}
+    );
+    return Object.values(govMap);
+  };
+
+  const parties = {
+    CON: "rgb(0, 144, 235)",
+    LAB: "rgb(227, 7, 2)",
+    LIB: "rgb(232, 160, 0)"
+  };
 
   const setTextSize = () => {
     setTimeout(() => {
@@ -27,27 +95,32 @@
     }, 0);
   };
 
-  let acts = false;
+  $: pm1 = govs[currentPM || 0];
+  $: pm2 = govs[currentPM + 1 || 0];
+  $: pm3 = govs[currentPM + 2 || 0];
 
-  $: pm1 = pms[currentPM || 0];
-  $: pm2 = pms[currentPM + 1 || 0];
-  $: pm3 = pms[currentPM + 2 || 0];
-
-  const setActs = async () => {
+  const setData = async () => {
     acts = await getActs();
+    govs = await getGovs();
+    majorities = [
+      ...[...govs]
+        .filter(pm => pm.majority && pm.majority.length)
+        .map(pm => pm.majority)
+    ];
   };
-  setActs();
+  setData();
 
-  const unique_majorities = [
+  $: unique_majorities = [
     ...new Set(majorities.flat().map(({ majority }) => majority))
   ];
   const min_majority = 0;
-  const ave_majority =
+  $: ave_majority =
+    unique_majorities.length &&
     unique_majorities.reduce((sum, x) => sum + x) / unique_majorities.length;
-  const max_majority = Math.max(...unique_majorities);
-  const half_star_first_half = ave_majority / 5;
-  const half_star_second_half = (max_majority - ave_majority) / 5;
-  const star_boundries = [
+  $: max_majority = Math.max(...unique_majorities);
+  $: half_star_first_half = ave_majority / 5;
+  $: half_star_second_half = (max_majority - ave_majority) / 5;
+  $: star_boundries = [
     0,
     half_star_first_half * 2,
     half_star_first_half * 4,
@@ -137,15 +210,15 @@
         currentActName = false;
         currentActLink = false;
         currentActDate = false;
-        currentSeats = pms[0].majority[0].seats;
-        currentMajority = pms[0].majority[0].majority;
+        currentSeats = govs[0].majority[0].seats;
+        currentMajority = govs[0].majority[0].majority;
         currentDate = moment(new Date()).format("MMM YYYY");
       }
     })
   );
 
   afterUpdate(() => {
-    if (observerIsSet || !acts) return;
+    if (observerIsSet || !acts || !govs) return;
     document.querySelectorAll(".scroll").forEach(month => {
       observer.unobserve(month);
       observer.observe(month);
@@ -228,9 +301,9 @@
 
   $: actTitleOpacity =
     y > animations.pms.up1 + 100
-      ? 1 - (y - (animations.pms.up1 + 100)) / 100
+      ? 3 - (y - (animations.pms.up1 + 100)) / 100
       : y > animations.cover.startFade + 200
-      ? 0 + (y - (animations.cover.startFade + 200)) / 100
+      ? 0 + (y - (animations.cover.startFade + 200)) / 50
       : 0;
 
   $: firstMajorityScale =
@@ -336,7 +409,7 @@
     letter-spacing: 2px;
   }
   h1 {
-    background: url("https://thumbs.gfycat.com/PastelCloudyGelding-size_restricted.gif");
+    background: url("/flag.gif");
     background-size: cover;
     background-position: center center;
     text-transform: uppercase;
@@ -720,7 +793,7 @@
 </style>
 
 <svelte:window bind:scrollY={y} bind:innerHeight={height} />
-{#if acts}
+{#if acts && govs}
   <main>
     <div class="main-inner">
       <header>
@@ -755,7 +828,7 @@
         <div class="current-act-name">
           <a href={currentActLink} target="_blank">
             <div
-              style={`background: ${parties[pms[currentPM].party]}; width: ${calculateMajorityWidth(
+              style={`background: ${parties[govs[currentPM].party]}; width: ${calculateMajorityWidth(
                 {
                   majority: +currentMajority,
                   seats: +currentSeats
@@ -779,14 +852,14 @@
           {#if currentAct}
             <div
               class="current-act"
-              style={`--my-color-var: ${parties[pms[currentPM].party].replace(')', ',0.5)')};`}>
+              style={`--my-color-var: ${parties[govs[currentPM].party].replace(')', ',0.5)')};`}>
               <div class="inner">{currentAct}</div>
             </div>
           {/if}
           <div
             class="majority-header"
             style={`
-		  	color: ${parties[pms[currentPM].party]}; 
+		  	color: ${parties[govs[currentPM].party]}; 
 		  	transform: translateY(${y < animations.pms.pause ? 100 : Math.max(0, 250 - (y - animations.pms.pause))}px)
 		  `}>
             <div>
@@ -810,11 +883,11 @@
               style={`opacity: ${pm2 ? 1 : 0}`}
               class={`pm2 ${y > animations.pm2.down ? 'bounceOutDown' : 'bounceInUp'} animated`}
               src={pm2 && `/pms/${pm2.image}`} />
-            {#if pms[currentPM]}
+            {#if govs[currentPM]}
               <img
                 alt="pm1"
                 class={`pm1 ${y > animations.pm1.left ? 'left' : ''}`}
-                src={`/pms/${pms[currentPM].image}`} />
+                src={`/pms/${govs[currentPM].image}`} />
             {/if}
             <img
               alt="pm3"
@@ -824,11 +897,11 @@
           </div>
           <div
             class={`majority`}
-            style={`background: ${parties[pms[currentPM].party]}`}>
+            style={`background: ${parties[govs[currentPM].party]}`}>
             <span
               class="majority-text"
               style={`transform: translateY(${y < animations.pms.pause ? 100 : Math.max(0, 100 - (y - animations.pms.pause))}px)`}>
-              {pms[currentPM].nickname}
+              {govs[currentPM].nickname}
             </span>
           </div>
           <span class="scroll-down" style="opacity: {1 - Math.max(0, y / 80)}">
@@ -843,20 +916,20 @@
           class="majority-title first-majority"
           style={`transform: scale(${firstMajorityScale}); opacity: ${firstMajorityScale}; padding-top: calc(3rem + ${y < animations.pms.up2 ? 0 : Math.min(y - animations.pms.up2, 200)}px)`}>
           <div class="scroll">
-            {pms[0].majority[0].coalition ? `with ${pms[0].majority[0].coalition}` : majorityText(pms[0].majority[0].majority)}
+            {govs[0].majority[0].coalition ? `with ${govs[0].majority[0].coalition}` : majorityText(govs[0].majority[0].majority)}
           </div>
           <div>
             {#each new Array(5) as _, i_star}
               <i
                 class="fas fa-star"
-                style={`color: ${pms[0].majority[0].majority > star_boundries[i_star] ? 'rgb(232, 209, 0)' : '#c6c6c6'};`} />
+                style={`color: ${govs[0].majority[0].majority > star_boundries[i_star] ? 'rgb(232, 209, 0)' : '#c6c6c6'};`} />
             {/each}
           </div>
         </div>
         <div
           class="history-body"
           style={`opacity: ${y < animations.pms.up2 + 100 ? 0 : (y - animations.pms.up2 - 100) / 100}`}>
-          {#each pms as pm, i}
+          {#each govs as pm, i}
             <div class="pm " {i}>
               <div
                 class={`scroll mini-pm-container ${i === 0 && 'first-pm'}`}
@@ -871,7 +944,7 @@
                     src={`/pms/${pm.image}`} />
                   <div
                     class="pm-avatar-border"
-                    style={`background: ${parties[pms[i].party]}`} />
+                    style={`background: ${parties[govs[i].party]}`} />
                 </div>
               </div>
               {#each pm.majority.filter(Boolean) as majority, i_m}
@@ -907,7 +980,7 @@
                             <a href={month_act.Link} target="_blank">
                               <div
                                 class="scroll month act"
-                                style={`background: ${parties[pms[i].party]}; opacity: ${month_act.Simple === currentAct ? 0 : 1}`}
+                                style={`background: ${parties[govs[i].party]}; opacity: ${month_act.Simple === currentAct ? 0 : 1}`}
                                 maj={majority.majority}
                                 act={month_act.Simple}
                                 actName={month_act.Act}

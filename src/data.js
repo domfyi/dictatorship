@@ -1,32 +1,3 @@
-import { convertCSVToArray } from "convert-csv-to-array";
-
-export const parties = {
-  CON: "rgb(0, 144, 235)",
-  LAB: "rgb(227, 7, 2)",
-  LIB: "rgb(232, 160, 0)"
-};
-
-const acts_url =
-  "https://docs.google.com/spreadsheets/d/e/2PACX-1vTmccYW6VEGjZRN926Bi8v-QTbzmLW9mcTM0UvMzmF8iH3zel_yHdTPand5eM_VpY6B5fgv18j-SBp8/pub?gid=0&single=true&output=tsv";
-
-export const getActs = async () => {
-  const data = await fetch(acts_url);
-  const tsv = await data.text();
-  const arrayofObjects = convertCSVToArray(tsv, {
-    header: false,
-    separator: "\t"
-  });
-  const actMap = arrayofObjects.reduce((list, act) => {
-    if (!act.Date || !act.Date.length) return list;
-    const key = act.Date.slice(0, 7);
-    if (act["Visible"] !== "TRUE") return list;
-    if (!list[key]) list[key] = [];
-    list[key].push(act);
-    return list;
-  }, {});
-  return actMap;
-};
-
 export const pms = [
   {
     name: "Boris Johnson",
@@ -395,8 +366,15 @@ export const pms = [
   // }
 ];
 
-export let majorities = [
-  ...[...pms]
-    .filter(pm => pm.majority && pm.majority.length)
-    .map(pm => pm.majority)
-];
+// console.log(
+//   convertArrayToCSV(
+//     [...pms]
+//       .map(pm =>
+//         pm.majority.map(maj => ({
+//           ...pm,
+//           ...maj
+//         }))
+//       )
+//       .flat()
+//   )
+// );
