@@ -241,8 +241,8 @@
       : Math.max(1, 3 - (y - animations.pms.up2) / 50);
 
   const isActClose = month => {
-    const isClose =
-      [-4, -3, -2, -1, 1, 2, 3, 4, 5, 6, 7, 8]
+    return (
+      ![-4, -3, -2, -1, 1, 2, 3, 4, 5, 6, 7, 8, 9]
         .map(
           m =>
             acts[
@@ -251,10 +251,8 @@
                 .format("YYYY-MM")
             ]
         )
-        .filter(Boolean).length > 0;
-
-    console.log({ date: month.format("YYYY-MM"), isClose });
-    return !isClose;
+        .filter(Boolean).length > 0
+    );
   };
 </script>
 
