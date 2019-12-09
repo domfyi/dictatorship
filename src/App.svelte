@@ -229,6 +229,9 @@
     overflow: hidden;
   }
   .main-inner {
+    background: #222;
+  }
+  .history {
     background: #fff;
   }
   .main-inner,
@@ -237,7 +240,7 @@
   }
   header {
     height: 100vh;
-    padding-bottom: 760px;
+    /* padding-bottom: 760px; */
   }
   header p {
     margin: 0;
@@ -513,7 +516,7 @@
     left: 33%;
     bottom: 18vh;
     background-color: var(--my-color-var);
-    color: #222;
+    color: #fff;
     border-radius: 0.6em;
     font-weight: 800;
     text-transform: uppercase;
@@ -607,7 +610,7 @@
 			rgba(179,179,179,1), 
 			rgba(179,179,179,${y < animations.cover.startFade ? 1 : 1 - (y - animations.cover.startFade) / 1000}),
 			rgba(179,179,179,${y < animations.cover.startFade ? 1 : 1 - (y - animations.cover.startFade) / 100})
-		);
+		); 
 	  `}>
           <div class="cover-inner">
             <div
@@ -645,7 +648,7 @@
       {/if}
       <div
         class="overlay"
-        style={`bottom: ${pmsBottom}px; background: ${y > height ? '#fff' : 'none'}`}>
+        style={`bottom: ${pmsBottom}px; background: ${y > height ? '#222' : 'none'}`}>
         <div class="ovelay-inner">
           {#if currentAct}
             <div
@@ -699,7 +702,9 @@
           </span>
         </div>
       </div>
-      <section class="history">
+      <section
+        class="history"
+        style={`margin-top: ${-pmsBottom + (y < animations.pms.stop ? y : animations.pms.stop)}px;`}>
         {#each pms as pm, i}
           <div class="pm " {i}>
             <div
