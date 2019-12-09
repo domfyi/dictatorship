@@ -74,7 +74,7 @@ export const pms = [
         date: "2010-05-11",
         majority: 78,
         seats: 650,
-        coalition: "Lib Dems"
+        coalition: "The Lib Dems"
       }
     ]
   },
