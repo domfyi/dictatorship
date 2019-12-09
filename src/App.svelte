@@ -685,10 +685,6 @@
   }
 
   @media only screen and (max-width: 600px) {
-    .pm1.left {
-      transform: scale(0.8);
-      transform-origin: bottom;
-    }
     .majority-text {
       /* transform: scale(0.8);
       transform-origin: right; */
@@ -707,6 +703,10 @@
     }
     .majority {
       font-size: 6vh;
+    }
+    .pm1.left {
+      transform: scale(0.8);
+      transform-origin: bottom;
     }
   }
 </style>
