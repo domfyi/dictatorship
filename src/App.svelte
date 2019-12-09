@@ -152,14 +152,15 @@
     observerIsSet = true;
   });
 
+  $: victorianPoint =
+    y && document.documentElement.scrollHeight - height - height / 3;
+
   const setpmsBottom = () => {
     const { up1, pause, up2, stop } = animations.pms;
     const pmHeight = height / 3;
     const startPoint = 0;
     const midPoint = height - height / 2 - pmHeight / 4;
     const endPoint = height - pmHeight + 4;
-    const victorianPoint =
-      document.documentElement.scrollHeight - height - height / 3;
     const firstHalfDistance = midPoint - startPoint;
     const firstHalfTime = pause - up1;
     const secondHalfDistance = endPoint - midPoint;
@@ -178,6 +179,13 @@
       currentAct = false;
       currentActLink = false;
     }
+    console.log({
+      endPoint,
+      y,
+      victorianPoint,
+      height,
+      sh: document.documentElement.scrollHeight
+    });
     const pmBottom =
       y === 0
         ? 0
@@ -187,10 +195,8 @@
         ? midPoint
         : y > up2 && y <= stop
         ? midPoint + (y - up2) * secondHalfPxPerPx
-        : y > stop && y <= victorianPoint
+        : y > stop
         ? endPoint
-        : y > victorianPoint
-        ? endPoint + (y - victorianPoint)
         : startPoint;
     return Math.round(pmBottom);
   };
@@ -727,7 +733,7 @@
       </div>
       <div
         class="overlay"
-        style={`bottom: ${pmsBottom}px; background: ${y > height ? '#222' : 'none'}`}>
+        style={`bottom: ${pmsBottom}px; background: ${y > height ? '#222' : 'none'}; transform: translateX(-50%) translateY(-${y < victorianPoint ? 0 : y - victorianPoint}px)`}>
         <div class="ovelay-inner">
           {#if currentAct}
             <div
@@ -893,13 +899,14 @@
               {/each}
             </div>
           {/each}
-        </div>
-        <div class="victorians">
-          <a class="author" target="_blank" href="https://dom.fyi">
-            <div class="created-by">🚀</div>
-            <div>created by</div>
-            <div class="domfyi">dom.fyi ›</div>
-          </a>
+          <div class="scroll month" style={'opacity:0'} resetAct={true} />
+          <div class="victorians">
+            <a class="author" target="_blank" href="https://dom.fyi">
+              <div class="created-by">🚀</div>
+              <div>created by</div>
+              <div class="domfyi">dom.fyi ›</div>
+            </a>
+          </div>
         </div>
       </section>
     </div>
