@@ -179,13 +179,6 @@
       currentAct = false;
       currentActLink = false;
     }
-    console.log({
-      endPoint,
-      y,
-      victorianPoint,
-      height,
-      sh: document.documentElement.scrollHeight
-    });
     const pmBottom =
       y === 0
         ? 0
@@ -391,13 +384,18 @@
   }
   .overlay {
     text-align: center;
-    height: 33vh;
+    height: 33%;
     z-index: 10;
     left: 50%;
     transform: translateX(-50%);
     overflow: hidden;
     border-bottom: 6px solid #222;
     margin-bottom: -6px;
+  }
+  .overlay-inner {
+    left: 0;
+    height: 100%;
+    width: 100%;
   }
   .majority,
   .overlay {
