@@ -709,6 +709,7 @@
           <div class="pm " {i}>
             <div
               class={`scroll mini-pm-container ${i === 0 && 'first-pm'}`}
+              style={`opacity: ${currentPM === i ? 0 : 1}`}
               pm={i}
               resetAct={true}>
               <div class="pm-avatar animated">
