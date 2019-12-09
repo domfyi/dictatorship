@@ -449,6 +449,7 @@
   }
   .act-name {
     transition: 0.5s all;
+    margin: 0 6px;
   }
   .scroll-down {
     color: white;
@@ -668,8 +669,23 @@
       transform-origin: bottom;
     }
     .majority-text {
-      transform: scale(0.8);
-      transform-origin: right;
+      /* transform: scale(0.8);
+      transform-origin: right; */
+    }
+    .pm3 {
+      /* transform-origin: left bottom; */
+      height: 50%;
+    }
+    .pm1 {
+      /* transform-origin: center bottom; */
+      height: 70%;
+    }
+    .pm2 {
+      height: 60%;
+      /* transform-origin: right bottom; */
+    }
+    .majority {
+      font-size: 6vh;
     }
   }
 </style>
