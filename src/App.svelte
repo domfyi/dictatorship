@@ -145,7 +145,6 @@
 
   afterUpdate(() => {
     if (observerIsSet || !acts) return;
-    document.body.style.width = document.body.style.width - 0.0001;
     document.querySelectorAll(".scroll").forEach(month => {
       observer.unobserve(month);
       observer.observe(month);
