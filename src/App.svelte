@@ -20,6 +20,8 @@
   let currentActLink = "";
   let currentActDate = "";
 
+  // const data_url =
+  //   "https://docs.google.com/spreadsheets/d/e/2PACX-1vTmccYW6VEGjZRN926Bi8v-QTbzmLW9mcTM0UvMzmF8iH3zel_yHdTPand5eM_VpY6B5fgv18j-SBp8/pub?output=tsv";
   const govs_url =
     "https://docs.google.com/spreadsheets/d/e/2PACX-1vTmccYW6VEGjZRN926Bi8v-QTbzmLW9mcTM0UvMzmF8iH3zel_yHdTPand5eM_VpY6B5fgv18j-SBp8/pub?gid=1213725229&single=true&output=tsv";
   const acts_url =
@@ -55,10 +57,11 @@
     const govMap = arrayofObjects.reduce(
       (
         list,
-        { name, nickname, party, image, date, majority, seats, coalition }
+        { id, name, nickname, party, image, date, majority, seats, coalition }
       ) => {
-        if (!list[name]) {
-          list[name] = {
+        if (!list[id]) {
+          list[id] = {
+            id,
             name,
             nickname,
             party,
@@ -66,7 +69,8 @@
             majority: []
           };
         }
-        list[name].majority.push({
+        list[id].majority.push({
+          id,
           date,
           majority,
           seats,
@@ -76,8 +80,22 @@
       },
       {}
     );
-    return Object.values(govMap);
+    const asArray = Object.values(govMap);
+    console.log({ asArray });
+    return asArray.reverse();
   };
+
+  // const getData = async () => {
+  //   // const data = await fetch(data_url);
+  //   // const tsv = await data.text();
+  //   // console.log({ tsv });
+  //   const arrayofObjects = convertCSVToArray(tsv, {
+  //     header: false,
+  //     separator: "\t"
+  //   });
+  //   return { arrayofObjects };
+  //   return "hi";
+  // };
 
   const parties = {
     CON: "rgb(0, 144, 235)",
@@ -100,13 +118,21 @@
   $: pm3 = govs[currentPM + 2 || 0];
 
   const setData = async () => {
-    acts = await getActs();
-    govs = await getGovs();
-    majorities = [
-      ...[...govs]
-        .filter(pm => pm.majority && pm.majority.length)
-        .map(pm => pm.majority)
-    ];
+    // const all_data = await getData();
+    // console.log(all_data);
+    console.log("fetching");
+    try {
+      acts = await getActs();
+      govs = await getGovs();
+      console.log(govs);
+      majorities = [
+        ...[...govs]
+          .filter(pm => pm.majority && pm.majority.length)
+          .map(pm => pm.majority)
+      ];
+    } catch (error) {
+      console.log(error);
+    }
   };
   setData();
 
