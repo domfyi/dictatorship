@@ -963,7 +963,7 @@
         </div>
         <div
           class="history-body"
-          style={`opacity: ${y < animations.pms.up2 + 100 ? 0 : (y - animations.pms.up2 - 100) / 100}`}>
+          style={`opacity: ${y < animations.pms.up2 + 100 ? 0 : (y - animations.pms.up2 - 100) / 100}; padding-top: ${Math.max(0, 200 - (y - animations.pms.up2))}px`}>
           {#each govs as pm, i}
             <div class="pm " {i}>
               <div
