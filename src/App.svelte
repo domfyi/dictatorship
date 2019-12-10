@@ -764,6 +764,33 @@
     margin: 0 auto !important;
   }
 
+  .loading {
+    position: fixed;
+    background: #222;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    text-align: center;
+    text-transform: uppercase;
+    color: #222;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    transition: 0s all 0.2s;
+  }
+  .loading img {
+    padding-bottom: 33vh;
+  }
+  .loading.loaded {
+    opacity: 0;
+    pointer-events: none;
+    /* display: none; */
+  }
+
   @media only screen and (max-width: 600px) {
     .majority-text {
       /* transform: scale(0.8);
@@ -793,6 +820,14 @@
 </style>
 
 <svelte:window bind:scrollY={y} bind:innerHeight={height} />
+<div class={`loading ${acts && govs && 'loaded'}`}>
+  <div>
+    <div>
+      <img src="/loading.svg" />
+    </div>
+    <div>loading</div>
+  </div>
+</div>
 {#if acts && govs}
   <main>
     <div class="main-inner">
