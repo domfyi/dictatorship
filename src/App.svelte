@@ -673,7 +673,7 @@
   .current-act {
     border-radius: 8px;
     position: absolute;
-    top: 0.5rem;
+    top: 1.5rem;
     right: 0;
     left: 33%;
     bottom: 18vh;
