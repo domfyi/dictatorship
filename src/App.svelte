@@ -504,6 +504,7 @@
     justify-content: center;
     vertical-align: bottom;
     height: 66%;
+    margin-top: 2px;
   }
   .pms > div {
     height: 100%;
@@ -567,8 +568,8 @@
     height: 33% !important;
     background: red;
     width: 100%;
-    line-height: 12vh;
-    font-size: 8vh;
+    line-height: 8.5vh;
+    font-size: 7.5vh;
     font-weight: bold;
     letter-spacing: 1px;
     color: #fff;
@@ -579,6 +580,24 @@
     display: inline-block;
     color: #222;
     text-transform: uppercase;
+    height: 100%;
+  }
+  .majority-text-name {
+    height: 66%;
+    margin-top: 2px;
+  }
+  .majority-text-stars {
+    height: 33%;
+    font-size: 2vh;
+    vertical-align: top;
+    line-height: 3vh;
+  }
+  .majority-text-prefix {
+    vertical-align: bottom;
+    display: inline-block;
+    line-height: 2.5vh;
+    opacity: 0.5;
+    color: #fff;
   }
   .mini-pm-container {
     margin-top: 20px;
@@ -798,9 +817,8 @@
   }
 
   @media only screen and (max-width: 600px) {
-    .majority-text {
-      /* transform: scale(0.8);
-      transform-origin: right; */
+    .majority-text-prefix {
+      line-height: 2.75vh;
     }
     .pm3 {
       /* transform-origin: left bottom; */
@@ -816,6 +834,13 @@
     }
     .majority {
       font-size: 6vh;
+    }
+    .majority-text-name {
+      margin-top: 4px;
+    }
+    .majority-text-stars {
+      font-size: 1.8vh;
+      margin-top: -4px;
     }
     .pm1.left {
       transform: scale(0.8);
@@ -939,11 +964,19 @@
           <div
             class={`majority`}
             style={`background: ${parties[govs[currentPM].party]}`}>
-            <span
+            <div
               class="majority-text"
               style={`transform: translateY(${y < animations.pms.pause ? 100 : Math.max(0, 100 - (y - animations.pms.pause))}px)`}>
-              {govs[currentPM].nickname}
-            </span>
+              <div class="majority-text-name">{govs[currentPM].nickname}</div>
+              <div class="majority-text-stars">
+                <span class="majority-text-prefix">MAJ:</span>
+                {#each new Array(5) as _, i_star}
+                  <i
+                    class="fas fa-star"
+                    style={`color: ${currentMajority > star_boundries[i_star] ? 'rgb(232, 209, 0)' : 'rgba(198, 198, 198, 0.5)'};`} />
+                {/each}
+              </div>
+            </div>
           </div>
           <span class="scroll-down" style="opacity: {1 - Math.max(0, y / 80)}">
             ˅
@@ -976,6 +1009,7 @@
                 class={`scroll mini-pm-container ${i === 0 && 'first-pm'}`}
                 style={`opacity: ${currentPM === i ? 0 : 1}`}
                 pm={i}
+                maj={pm.majority[0].majority}
                 resetAct={true}>
                 <div class="pm-avatar animated">
                   <img
@@ -991,7 +1025,7 @@
               {#each pm.majority.filter(Boolean) as majority, i_m}
                 <div>
                   {#if i !== 0}
-                    <div class="majority-title scroll" resetAct={true}>
+                    <div class="majority-title scroll" resetAct="{true}}">
                       <div>
                         {majority.coalition ? `with ${majority.coalition}` : majorityText(majority.majority)}
                       </div>
@@ -1052,6 +1086,7 @@
                           <div
                             class="scroll month"
                             pm={i}
+                            maj={majority.majority}
                             resetAct={isActClose(moment(getMajorityDateRange(i, i_m).end).subtract(i_m_m, 'months'))}
                             month={moment(getMajorityDateRange(i, i_m).end)
                               .subtract(i_m_m, 'months')
