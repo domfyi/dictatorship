@@ -914,7 +914,7 @@
       </div>
       <div
         class="overlay"
-        style={`top: ${pmsTop}px; background: ${y > height ? '#222' : 'none'}; transform: translateX(-50%) translateY(-${y < victorianPoint ? 0 : y - victorianPoint}px)`}>
+        style={`bottom: ${pmsBottom}px; background: ${y > height ? '#222' : 'none'}; transform: translateX(-50%) translateY(-${y < victorianPoint ? 0 : y - victorianPoint}px)`}>
         <div class="ovelay-inner">
           {#if currentAct}
             <div
