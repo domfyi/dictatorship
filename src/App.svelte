@@ -275,6 +275,7 @@
     return Math.round(pmBottom);
   };
   $: pmsBottom = setpmsBottom(y, height);
+  $: pmsTop = (height / 3) * 2 - pmsBottom;
 
   const getMajorityEndDate = (i, i_m) => {
     let start;
@@ -913,7 +914,7 @@
       </div>
       <div
         class="overlay"
-        style={`bottom: ${pmsBottom}px; background: ${y > height ? '#222' : 'none'}; transform: translateX(-50%) translateY(-${y < victorianPoint ? 0 : y - victorianPoint}px)`}>
+        style={`top: ${pmsTop}px; background: ${y > height ? '#222' : 'none'}; transform: translateX(-50%) translateY(-${y < victorianPoint ? 0 : y - victorianPoint}px)`}>
         <div class="ovelay-inner">
           {#if currentAct}
             <div
