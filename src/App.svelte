@@ -869,9 +869,9 @@
           style={`
           opacity: ${1 - y / 200};
 		background-image: linear-gradient(
-			rgba(200,200,200,1), 
-			rgba(200,200,200,${y < animations.cover.startFade ? 1 : 1 - (y - animations.cover.startFade) / 1000}),
-			rgba(200,200,200,${y < animations.cover.startFade ? 1 : 1 - (y - animations.cover.startFade) / 100})
+			rgba(222,222,222,1), 
+			rgba(222,222,222,${y < animations.cover.startFade ? 1 : 1 - (y - animations.cover.startFade) / 1000}),
+			rgba(222,222,222,${y < animations.cover.startFade ? 1 : 1 - (y - animations.cover.startFade) / 100})
 		); 
 	  `}>
           <div class="cover-inner">
