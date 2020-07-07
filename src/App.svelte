@@ -21,9 +21,9 @@
   let currentActDate = "";
 
   const govs_url =
-    "https://docs.google.com/spreadsheets/d/e/2PACX-1vTmccYW6VEGjZRN926Bi8v-QTbzmLW9mcTM0UvMzmF8iH3zel_yHdTPand5eM_VpY6B5fgv18j-SBp8/pub?gid=1213725229&single=true&output=tsv";
+    "https://cors-anywhere.herokuapp.com/https://docs.google.com/spreadsheets/d/e/2PACX-1vTmccYW6VEGjZRN926Bi8v-QTbzmLW9mcTM0UvMzmF8iH3zel_yHdTPand5eM_VpY6B5fgv18j-SBp8/pub?gid=1213725229&single=true&output=tsv";
   const acts_url =
-    "https://docs.google.com/spreadsheets/d/e/2PACX-1vTmccYW6VEGjZRN926Bi8v-QTbzmLW9mcTM0UvMzmF8iH3zel_yHdTPand5eM_VpY6B5fgv18j-SBp8/pub?gid=0&single=true&output=tsv";
+    "https://cors-anywhere.herokuapp.com/https://docs.google.com/spreadsheets/d/e/2PACX-1vTmccYW6VEGjZRN926Bi8v-QTbzmLW9mcTM0UvMzmF8iH3zel_yHdTPand5eM_VpY6B5fgv18j-SBp8/pub?gid=0&single=true&output=tsv";
 
   let majorities = [];
 
