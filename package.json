@@ -18,7 +18,7 @@
   "dependencies": {
     "animate.css": "^3.7.2",
     "convert-csv-to-array": "^1.0.3",
-    "moment": "^2.24.0",
+    "moment": "^2.29.2",
     "sirv-cli": "^0.4.4",
     "textfit": "^2.4.0"
   }
